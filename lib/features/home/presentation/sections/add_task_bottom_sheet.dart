@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:task_craft/features/home/domain/entities/project_entity.dart';
 import 'package:task_craft/features/home/presentation/components/app_choice_chip.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
-  final Function(String title, String priority) onTaskCreated;
+  final Function(ProjectEntity) onTaskCreated;
 
   const AddTaskBottomSheet({super.key, required this.onTaskCreated});
 
@@ -110,10 +111,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_taskController.text.trim().isNotEmpty) {
-                        widget.onTaskCreated(
-                          _taskController.text.trim(),
-                          _selectedPriority,
-                        );
+                        // widget.onTaskCreated(
+                          
+                        // );
                         Navigator.pop(context);
                       }
                     },

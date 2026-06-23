@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectModel {
 
- String get id; String get userId; String get title; String get description; String get status; List<TaskModel> get tasks; bool get isCompleted;
+@HiveField(0) String get id;@HiveField(1) String get userId;@HiveField(2) String get title;@HiveField(3)@JsonKey(name: 'body') String get description;@HiveField(4) String get status;@HiveField(5) List<TaskModel> get tasks;@HiveField(6) bool get isCompleted;
 /// Create a copy of ProjectModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $ProjectModelCopyWith<$Res>  {
   factory $ProjectModelCopyWith(ProjectModel value, $Res Function(ProjectModel) _then) = _$ProjectModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String userId, String title, String description, String status, List<TaskModel> tasks, bool isCompleted
+@HiveField(0) String id,@HiveField(1) String userId,@HiveField(2) String title,@HiveField(3)@JsonKey(name: 'body') String description,@HiveField(4) String status,@HiveField(5) List<TaskModel> tasks,@HiveField(6) bool isCompleted
 });
 
 
@@ -159,7 +159,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String userId,  String title,  String description,  String status,  List<TaskModel> tasks,  bool isCompleted)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String userId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'body')  String description, @HiveField(4)  String status, @HiveField(5)  List<TaskModel> tasks, @HiveField(6)  bool isCompleted)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectModel() when $default != null:
 return $default(_that.id,_that.userId,_that.title,_that.description,_that.status,_that.tasks,_that.isCompleted);case _:
@@ -180,7 +180,7 @@ return $default(_that.id,_that.userId,_that.title,_that.description,_that.status
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String userId,  String title,  String description,  String status,  List<TaskModel> tasks,  bool isCompleted)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)  String userId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'body')  String description, @HiveField(4)  String status, @HiveField(5)  List<TaskModel> tasks, @HiveField(6)  bool isCompleted)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectModel():
 return $default(_that.id,_that.userId,_that.title,_that.description,_that.status,_that.tasks,_that.isCompleted);case _:
@@ -200,7 +200,7 @@ return $default(_that.id,_that.userId,_that.title,_that.description,_that.status
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String userId,  String title,  String description,  String status,  List<TaskModel> tasks,  bool isCompleted)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@HiveField(0)  String id, @HiveField(1)  String userId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'body')  String description, @HiveField(4)  String status, @HiveField(5)  List<TaskModel> tasks, @HiveField(6)  bool isCompleted)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectModel() when $default != null:
 return $default(_that.id,_that.userId,_that.title,_that.description,_that.status,_that.tasks,_that.isCompleted);case _:
@@ -215,22 +215,22 @@ return $default(_that.id,_that.userId,_that.title,_that.description,_that.status
 @JsonSerializable()
 
 class _ProjectModel implements ProjectModel {
-  const _ProjectModel({required this.id, required this.userId, required this.title, required this.description, required this.status, required final  List<TaskModel> tasks, required this.isCompleted}): _tasks = tasks;
+  const _ProjectModel({@HiveField(0) this.id = "", @HiveField(1) this.userId = "", @HiveField(2) this.title = "", @HiveField(3)@JsonKey(name: 'body') this.description = "", @HiveField(4) this.status = "", @HiveField(5) final  List<TaskModel> tasks = const [], @HiveField(6) this.isCompleted = false}): _tasks = tasks;
   factory _ProjectModel.fromJson(Map<String, dynamic> json) => _$ProjectModelFromJson(json);
 
-@override final  String id;
-@override final  String userId;
-@override final  String title;
-@override final  String description;
-@override final  String status;
+@override@JsonKey()@HiveField(0) final  String id;
+@override@JsonKey()@HiveField(1) final  String userId;
+@override@JsonKey()@HiveField(2) final  String title;
+@override@HiveField(3)@JsonKey(name: 'body') final  String description;
+@override@JsonKey()@HiveField(4) final  String status;
  final  List<TaskModel> _tasks;
-@override List<TaskModel> get tasks {
+@override@JsonKey()@HiveField(5) List<TaskModel> get tasks {
   if (_tasks is EqualUnmodifiableListView) return _tasks;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tasks);
 }
 
-@override final  bool isCompleted;
+@override@JsonKey()@HiveField(6) final  bool isCompleted;
 
 /// Create a copy of ProjectModel
 /// with the given fields replaced by the non-null parameter values.
@@ -265,7 +265,7 @@ abstract mixin class _$ProjectModelCopyWith<$Res> implements $ProjectModelCopyWi
   factory _$ProjectModelCopyWith(_ProjectModel value, $Res Function(_ProjectModel) _then) = __$ProjectModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String userId, String title, String description, String status, List<TaskModel> tasks, bool isCompleted
+@HiveField(0) String id,@HiveField(1) String userId,@HiveField(2) String title,@HiveField(3)@JsonKey(name: 'body') String description,@HiveField(4) String status,@HiveField(5) List<TaskModel> tasks,@HiveField(6) bool isCompleted
 });
 
 

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TaskModel {
 
- String get id; String get title; String get description; String get dueDate; String get priority; String get status; String get projectId;
+@HiveField(0)@JsonKey(name: 'id') int get id;@HiveField(1)@JsonKey(name: 'title') String get title;@HiveField(2)@JsonKey(name: 'completed') bool get isCompleted;@HiveField(3)@JsonKey(name: 'userId') int get projectId;
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $TaskModelCopyWith<TaskModel> get copyWith => _$TaskModelCopyWithImpl<TaskModel>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.status, status) || other.status == status)&&(identical(other.projectId, projectId) || other.projectId == projectId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.projectId, projectId) || other.projectId == projectId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,status,projectId);
+int get hashCode => Object.hash(runtimeType,id,title,isCompleted,projectId);
 
 @override
 String toString() {
-  return 'TaskModel(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, status: $status, projectId: $projectId)';
+  return 'TaskModel(id: $id, title: $title, isCompleted: $isCompleted, projectId: $projectId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $TaskModelCopyWith<$Res>  {
   factory $TaskModelCopyWith(TaskModel value, $Res Function(TaskModel) _then) = _$TaskModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String description, String dueDate, String priority, String status, String projectId
+@HiveField(0)@JsonKey(name: 'id') int id,@HiveField(1)@JsonKey(name: 'title') String title,@HiveField(2)@JsonKey(name: 'completed') bool isCompleted,@HiveField(3)@JsonKey(name: 'userId') int projectId
 });
 
 
@@ -65,16 +65,13 @@ class _$TaskModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? status = null,Object? projectId = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? isCompleted = null,Object? projectId = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,dueDate: null == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
-as String,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
-as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
-as String,
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as bool,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -159,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String dueDate,  String priority,  String status,  String projectId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@HiveField(0)@JsonKey(name: 'id')  int id, @HiveField(1)@JsonKey(name: 'title')  String title, @HiveField(2)@JsonKey(name: 'completed')  bool isCompleted, @HiveField(3)@JsonKey(name: 'userId')  int projectId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TaskModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.status,_that.projectId);case _:
+return $default(_that.id,_that.title,_that.isCompleted,_that.projectId);case _:
   return orElse();
 
 }
@@ -180,10 +177,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String description,  String dueDate,  String priority,  String status,  String projectId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@HiveField(0)@JsonKey(name: 'id')  int id, @HiveField(1)@JsonKey(name: 'title')  String title, @HiveField(2)@JsonKey(name: 'completed')  bool isCompleted, @HiveField(3)@JsonKey(name: 'userId')  int projectId)  $default,) {final _that = this;
 switch (_that) {
 case _TaskModel():
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.status,_that.projectId);case _:
+return $default(_that.id,_that.title,_that.isCompleted,_that.projectId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +197,10 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String description,  String dueDate,  String priority,  String status,  String projectId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@HiveField(0)@JsonKey(name: 'id')  int id, @HiveField(1)@JsonKey(name: 'title')  String title, @HiveField(2)@JsonKey(name: 'completed')  bool isCompleted, @HiveField(3)@JsonKey(name: 'userId')  int projectId)?  $default,) {final _that = this;
 switch (_that) {
 case _TaskModel() when $default != null:
-return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.priority,_that.status,_that.projectId);case _:
+return $default(_that.id,_that.title,_that.isCompleted,_that.projectId);case _:
   return null;
 
 }
@@ -215,16 +212,13 @@ return $default(_that.id,_that.title,_that.description,_that.dueDate,_that.prior
 @JsonSerializable()
 
 class _TaskModel implements TaskModel {
-  const _TaskModel({required this.id, required this.title, required this.description, required this.dueDate, required this.priority, required this.status, required this.projectId});
+  const _TaskModel({@HiveField(0)@JsonKey(name: 'id') this.id = 0, @HiveField(1)@JsonKey(name: 'title') this.title = "", @HiveField(2)@JsonKey(name: 'completed') this.isCompleted = false, @HiveField(3)@JsonKey(name: 'userId') this.projectId = 0});
   factory _TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);
 
-@override final  String id;
-@override final  String title;
-@override final  String description;
-@override final  String dueDate;
-@override final  String priority;
-@override final  String status;
-@override final  String projectId;
+@override@HiveField(0)@JsonKey(name: 'id') final  int id;
+@override@HiveField(1)@JsonKey(name: 'title') final  String title;
+@override@HiveField(2)@JsonKey(name: 'completed') final  bool isCompleted;
+@override@HiveField(3)@JsonKey(name: 'userId') final  int projectId;
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
@@ -239,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.status, status) || other.status == status)&&(identical(other.projectId, projectId) || other.projectId == projectId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TaskModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.projectId, projectId) || other.projectId == projectId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,description,dueDate,priority,status,projectId);
+int get hashCode => Object.hash(runtimeType,id,title,isCompleted,projectId);
 
 @override
 String toString() {
-  return 'TaskModel(id: $id, title: $title, description: $description, dueDate: $dueDate, priority: $priority, status: $status, projectId: $projectId)';
+  return 'TaskModel(id: $id, title: $title, isCompleted: $isCompleted, projectId: $projectId)';
 }
 
 
@@ -259,7 +253,7 @@ abstract mixin class _$TaskModelCopyWith<$Res> implements $TaskModelCopyWith<$Re
   factory _$TaskModelCopyWith(_TaskModel value, $Res Function(_TaskModel) _then) = __$TaskModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String description, String dueDate, String priority, String status, String projectId
+@HiveField(0)@JsonKey(name: 'id') int id,@HiveField(1)@JsonKey(name: 'title') String title,@HiveField(2)@JsonKey(name: 'completed') bool isCompleted,@HiveField(3)@JsonKey(name: 'userId') int projectId
 });
 
 
@@ -276,16 +270,13 @@ class __$TaskModelCopyWithImpl<$Res>
 
 /// Create a copy of TaskModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? description = null,Object? dueDate = null,Object? priority = null,Object? status = null,Object? projectId = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? isCompleted = null,Object? projectId = null,}) {
   return _then(_TaskModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
-as String,dueDate: null == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
-as String,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
-as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
-as String,
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as bool,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

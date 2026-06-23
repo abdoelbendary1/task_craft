@@ -55,11 +55,12 @@ extension ProjectsEventPatterns on ProjectsEvent {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _FetchedProjects value)?  fetchedProjects,TResult Function( _AddNewProject value)?  addNewProject,TResult Function( _DeleteProject value)?  deleteProject,TResult Function( _UpdateProject value)?  updateProject,TResult Function( _GoToProject value)?  goToProject,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Started value)?  started,TResult Function( _RefreshedProjects value)?  refreshProjects,TResult Function( _AddNewProject value)?  addNewProject,TResult Function( _DeleteProject value)?  deleteProject,TResult Function( _UpdateProject value)?  updateProject,TResult Function( _GoToProject value)?  goToProject,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _FetchedProjects() when fetchedProjects != null:
-return fetchedProjects(_that);case _AddNewProject() when addNewProject != null:
+case _Started() when started != null:
+return started(_that);case _RefreshedProjects() when refreshProjects != null:
+return refreshProjects(_that);case _AddNewProject() when addNewProject != null:
 return addNewProject(_that);case _DeleteProject() when deleteProject != null:
 return deleteProject(_that);case _UpdateProject() when updateProject != null:
 return updateProject(_that);case _GoToProject() when goToProject != null:
@@ -81,11 +82,12 @@ return goToProject(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _FetchedProjects value)  fetchedProjects,required TResult Function( _AddNewProject value)  addNewProject,required TResult Function( _DeleteProject value)  deleteProject,required TResult Function( _UpdateProject value)  updateProject,required TResult Function( _GoToProject value)  goToProject,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Started value)  started,required TResult Function( _RefreshedProjects value)  refreshProjects,required TResult Function( _AddNewProject value)  addNewProject,required TResult Function( _DeleteProject value)  deleteProject,required TResult Function( _UpdateProject value)  updateProject,required TResult Function( _GoToProject value)  goToProject,}){
 final _that = this;
 switch (_that) {
-case _FetchedProjects():
-return fetchedProjects(_that);case _AddNewProject():
+case _Started():
+return started(_that);case _RefreshedProjects():
+return refreshProjects(_that);case _AddNewProject():
 return addNewProject(_that);case _DeleteProject():
 return deleteProject(_that);case _UpdateProject():
 return updateProject(_that);case _GoToProject():
@@ -106,11 +108,12 @@ return goToProject(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _FetchedProjects value)?  fetchedProjects,TResult? Function( _AddNewProject value)?  addNewProject,TResult? Function( _DeleteProject value)?  deleteProject,TResult? Function( _UpdateProject value)?  updateProject,TResult? Function( _GoToProject value)?  goToProject,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Started value)?  started,TResult? Function( _RefreshedProjects value)?  refreshProjects,TResult? Function( _AddNewProject value)?  addNewProject,TResult? Function( _DeleteProject value)?  deleteProject,TResult? Function( _UpdateProject value)?  updateProject,TResult? Function( _GoToProject value)?  goToProject,}){
 final _that = this;
 switch (_that) {
-case _FetchedProjects() when fetchedProjects != null:
-return fetchedProjects(_that);case _AddNewProject() when addNewProject != null:
+case _Started() when started != null:
+return started(_that);case _RefreshedProjects() when refreshProjects != null:
+return refreshProjects(_that);case _AddNewProject() when addNewProject != null:
 return addNewProject(_that);case _DeleteProject() when deleteProject != null:
 return deleteProject(_that);case _UpdateProject() when updateProject != null:
 return updateProject(_that);case _GoToProject() when goToProject != null:
@@ -131,13 +134,14 @@ return goToProject(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  fetchedProjects,TResult Function()?  addNewProject,TResult Function()?  deleteProject,TResult Function()?  updateProject,TResult Function()?  goToProject,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  started,TResult Function()?  refreshProjects,TResult Function( ProjectEntity project)?  addNewProject,TResult Function( ProjectEntity project)?  deleteProject,TResult Function( ProjectEntity project)?  updateProject,TResult Function()?  goToProject,required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _FetchedProjects() when fetchedProjects != null:
-return fetchedProjects();case _AddNewProject() when addNewProject != null:
-return addNewProject();case _DeleteProject() when deleteProject != null:
-return deleteProject();case _UpdateProject() when updateProject != null:
-return updateProject();case _GoToProject() when goToProject != null:
+case _Started() when started != null:
+return started();case _RefreshedProjects() when refreshProjects != null:
+return refreshProjects();case _AddNewProject() when addNewProject != null:
+return addNewProject(_that.project);case _DeleteProject() when deleteProject != null:
+return deleteProject(_that.project);case _UpdateProject() when updateProject != null:
+return updateProject(_that.project);case _GoToProject() when goToProject != null:
 return goToProject();case _:
   return orElse();
 
@@ -156,13 +160,14 @@ return goToProject();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  fetchedProjects,required TResult Function()  addNewProject,required TResult Function()  deleteProject,required TResult Function()  updateProject,required TResult Function()  goToProject,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  started,required TResult Function()  refreshProjects,required TResult Function( ProjectEntity project)  addNewProject,required TResult Function( ProjectEntity project)  deleteProject,required TResult Function( ProjectEntity project)  updateProject,required TResult Function()  goToProject,}) {final _that = this;
 switch (_that) {
-case _FetchedProjects():
-return fetchedProjects();case _AddNewProject():
-return addNewProject();case _DeleteProject():
-return deleteProject();case _UpdateProject():
-return updateProject();case _GoToProject():
+case _Started():
+return started();case _RefreshedProjects():
+return refreshProjects();case _AddNewProject():
+return addNewProject(_that.project);case _DeleteProject():
+return deleteProject(_that.project);case _UpdateProject():
+return updateProject(_that.project);case _GoToProject():
 return goToProject();case _:
   throw StateError('Unexpected subclass');
 
@@ -180,13 +185,14 @@ return goToProject();case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  fetchedProjects,TResult? Function()?  addNewProject,TResult? Function()?  deleteProject,TResult? Function()?  updateProject,TResult? Function()?  goToProject,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  started,TResult? Function()?  refreshProjects,TResult? Function( ProjectEntity project)?  addNewProject,TResult? Function( ProjectEntity project)?  deleteProject,TResult? Function( ProjectEntity project)?  updateProject,TResult? Function()?  goToProject,}) {final _that = this;
 switch (_that) {
-case _FetchedProjects() when fetchedProjects != null:
-return fetchedProjects();case _AddNewProject() when addNewProject != null:
-return addNewProject();case _DeleteProject() when deleteProject != null:
-return deleteProject();case _UpdateProject() when updateProject != null:
-return updateProject();case _GoToProject() when goToProject != null:
+case _Started() when started != null:
+return started();case _RefreshedProjects() when refreshProjects != null:
+return refreshProjects();case _AddNewProject() when addNewProject != null:
+return addNewProject(_that.project);case _DeleteProject() when deleteProject != null:
+return deleteProject(_that.project);case _UpdateProject() when updateProject != null:
+return updateProject(_that.project);case _GoToProject() when goToProject != null:
 return goToProject();case _:
   return null;
 
@@ -198,8 +204,8 @@ return goToProject();case _:
 /// @nodoc
 
 
-class _FetchedProjects implements ProjectsEvent {
-  const _FetchedProjects();
+class _Started implements ProjectsEvent {
+  const _Started();
   
 
 
@@ -209,7 +215,7 @@ class _FetchedProjects implements ProjectsEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FetchedProjects);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Started);
 }
 
 
@@ -218,7 +224,39 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ProjectsEvent.fetchedProjects()';
+  return 'ProjectsEvent.started()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _RefreshedProjects implements ProjectsEvent {
+  const _RefreshedProjects();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RefreshedProjects);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ProjectsEvent.refreshProjects()';
 }
 
 
@@ -231,97 +269,226 @@ String toString() {
 
 
 class _AddNewProject implements ProjectsEvent {
-  const _AddNewProject();
+  const _AddNewProject(this.project);
   
 
+ final  ProjectEntity project;
 
-
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AddNewProjectCopyWith<_AddNewProject> get copyWith => __$AddNewProjectCopyWithImpl<_AddNewProject>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddNewProject);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AddNewProject&&(identical(other.project, project) || other.project == project));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,project);
 
 @override
 String toString() {
-  return 'ProjectsEvent.addNewProject()';
+  return 'ProjectsEvent.addNewProject(project: $project)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$AddNewProjectCopyWith<$Res> implements $ProjectsEventCopyWith<$Res> {
+  factory _$AddNewProjectCopyWith(_AddNewProject value, $Res Function(_AddNewProject) _then) = __$AddNewProjectCopyWithImpl;
+@useResult
+$Res call({
+ ProjectEntity project
+});
 
 
+$ProjectEntityCopyWith<$Res> get project;
+
+}
+/// @nodoc
+class __$AddNewProjectCopyWithImpl<$Res>
+    implements _$AddNewProjectCopyWith<$Res> {
+  __$AddNewProjectCopyWithImpl(this._self, this._then);
+
+  final _AddNewProject _self;
+  final $Res Function(_AddNewProject) _then;
+
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? project = null,}) {
+  return _then(_AddNewProject(
+null == project ? _self.project : project // ignore: cast_nullable_to_non_nullable
+as ProjectEntity,
+  ));
+}
+
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ProjectEntityCopyWith<$Res> get project {
+  
+  return $ProjectEntityCopyWith<$Res>(_self.project, (value) {
+    return _then(_self.copyWith(project: value));
+  });
+}
+}
 
 /// @nodoc
 
 
 class _DeleteProject implements ProjectsEvent {
-  const _DeleteProject();
+  const _DeleteProject(this.project);
   
 
+ final  ProjectEntity project;
 
-
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$DeleteProjectCopyWith<_DeleteProject> get copyWith => __$DeleteProjectCopyWithImpl<_DeleteProject>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteProject);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeleteProject&&(identical(other.project, project) || other.project == project));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,project);
 
 @override
 String toString() {
-  return 'ProjectsEvent.deleteProject()';
+  return 'ProjectsEvent.deleteProject(project: $project)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$DeleteProjectCopyWith<$Res> implements $ProjectsEventCopyWith<$Res> {
+  factory _$DeleteProjectCopyWith(_DeleteProject value, $Res Function(_DeleteProject) _then) = __$DeleteProjectCopyWithImpl;
+@useResult
+$Res call({
+ ProjectEntity project
+});
 
 
+$ProjectEntityCopyWith<$Res> get project;
+
+}
+/// @nodoc
+class __$DeleteProjectCopyWithImpl<$Res>
+    implements _$DeleteProjectCopyWith<$Res> {
+  __$DeleteProjectCopyWithImpl(this._self, this._then);
+
+  final _DeleteProject _self;
+  final $Res Function(_DeleteProject) _then;
+
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? project = null,}) {
+  return _then(_DeleteProject(
+null == project ? _self.project : project // ignore: cast_nullable_to_non_nullable
+as ProjectEntity,
+  ));
+}
+
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ProjectEntityCopyWith<$Res> get project {
+  
+  return $ProjectEntityCopyWith<$Res>(_self.project, (value) {
+    return _then(_self.copyWith(project: value));
+  });
+}
+}
 
 /// @nodoc
 
 
 class _UpdateProject implements ProjectsEvent {
-  const _UpdateProject();
+  const _UpdateProject(this.project);
   
 
+ final  ProjectEntity project;
 
-
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$UpdateProjectCopyWith<_UpdateProject> get copyWith => __$UpdateProjectCopyWithImpl<_UpdateProject>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateProject);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UpdateProject&&(identical(other.project, project) || other.project == project));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,project);
 
 @override
 String toString() {
-  return 'ProjectsEvent.updateProject()';
+  return 'ProjectsEvent.updateProject(project: $project)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$UpdateProjectCopyWith<$Res> implements $ProjectsEventCopyWith<$Res> {
+  factory _$UpdateProjectCopyWith(_UpdateProject value, $Res Function(_UpdateProject) _then) = __$UpdateProjectCopyWithImpl;
+@useResult
+$Res call({
+ ProjectEntity project
+});
 
 
+$ProjectEntityCopyWith<$Res> get project;
+
+}
+/// @nodoc
+class __$UpdateProjectCopyWithImpl<$Res>
+    implements _$UpdateProjectCopyWith<$Res> {
+  __$UpdateProjectCopyWithImpl(this._self, this._then);
+
+  final _UpdateProject _self;
+  final $Res Function(_UpdateProject) _then;
+
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? project = null,}) {
+  return _then(_UpdateProject(
+null == project ? _self.project : project // ignore: cast_nullable_to_non_nullable
+as ProjectEntity,
+  ));
+}
+
+/// Create a copy of ProjectsEvent
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ProjectEntityCopyWith<$Res> get project {
+  
+  return $ProjectEntityCopyWith<$Res>(_self.project, (value) {
+    return _then(_self.copyWith(project: value));
+  });
+}
+}
 
 /// @nodoc
 
@@ -399,13 +566,14 @@ extension ProjectsStatePatterns on ProjectsState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Error value)?  error,TResult Function( _Loaded value)?  loaded,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Error value)?  error,TResult Function( _Empty value)?  empty,TResult Function( _Loaded value)?  loaded,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
 return loading(_that);case _Error() when error != null:
-return error(_that);case _Loaded() when loaded != null:
+return error(_that);case _Empty() when empty != null:
+return empty(_that);case _Loaded() when loaded != null:
 return loaded(_that);case _:
   return orElse();
 
@@ -424,13 +592,14 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Error value)  error,required TResult Function( _Loaded value)  loaded,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Error value)  error,required TResult Function( _Empty value)  empty,required TResult Function( _Loaded value)  loaded,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case _Loading():
 return loading(_that);case _Error():
-return error(_that);case _Loaded():
+return error(_that);case _Empty():
+return empty(_that);case _Loaded():
 return loaded(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -448,13 +617,14 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Error value)?  error,TResult? Function( _Loaded value)?  loaded,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Error value)?  error,TResult? Function( _Empty value)?  empty,TResult? Function( _Loaded value)?  loaded,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
 return loading(_that);case _Error() when error != null:
-return error(_that);case _Loaded() when loaded != null:
+return error(_that);case _Empty() when empty != null:
+return empty(_that);case _Loaded() when loaded != null:
 return loaded(_that);case _:
   return null;
 
@@ -472,12 +642,13 @@ return loaded(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String message)?  error,TResult Function( List<ProjectEntity> projects)?  loaded,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String message)?  error,TResult Function()?  empty,TResult Function( List<ProjectEntity> projects)?  loaded,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Error() when error != null:
-return error(_that.message);case _Loaded() when loaded != null:
+return error(_that.message);case _Empty() when empty != null:
+return empty();case _Loaded() when loaded != null:
 return loaded(_that.projects);case _:
   return orElse();
 
@@ -496,12 +667,13 @@ return loaded(_that.projects);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String message)  error,required TResult Function( List<ProjectEntity> projects)  loaded,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String message)  error,required TResult Function()  empty,required TResult Function( List<ProjectEntity> projects)  loaded,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
 return loading();case _Error():
-return error(_that.message);case _Loaded():
+return error(_that.message);case _Empty():
+return empty();case _Loaded():
 return loaded(_that.projects);case _:
   throw StateError('Unexpected subclass');
 
@@ -519,12 +691,13 @@ return loaded(_that.projects);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String message)?  error,TResult? Function( List<ProjectEntity> projects)?  loaded,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String message)?  error,TResult? Function()?  empty,TResult? Function( List<ProjectEntity> projects)?  loaded,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
 return loading();case _Error() when error != null:
-return error(_that.message);case _Loaded() when loaded != null:
+return error(_that.message);case _Empty() when empty != null:
+return empty();case _Loaded() when loaded != null:
 return loaded(_that.projects);case _:
   return null;
 
@@ -662,6 +835,38 @@ as String,
 
 
 }
+
+/// @nodoc
+
+
+class _Empty implements ProjectsState {
+  const _Empty();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Empty);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ProjectsState.empty()';
+}
+
+
+}
+
+
+
 
 /// @nodoc
 

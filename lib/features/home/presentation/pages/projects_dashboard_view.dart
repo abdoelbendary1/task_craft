@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_craft/features/home/domain/entities/project_entity.dart';
+import 'package:task_craft/features/home/presentation/bloc/projects_bloc.dart';
 import 'package:task_craft/features/home/presentation/components/project_card_widget.dart';
 import 'package:task_craft/features/home/presentation/sections/add_task_bottom_sheet.dart';
 import 'package:task_craft/features/home/presentation/sections/dashboard_header_section.dart';
 import 'package:task_craft/features/home/presentation/widgets/projects_empty_ui.dart';
 
 class ProjectsDashboardView extends StatelessWidget {
-  final List<ProjectEntity> projects;
-  final VoidCallback onRefresh;
-  final Function(String title, String priority) handleTaskCreation;
-
-  const ProjectsDashboardView({
-    super.key,
-    required this.projects,
-    required this.onRefresh,
-    required this.handleTaskCreation,
-  });
+  const ProjectsDashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +19,9 @@ class ProjectsDashboardView extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () async => onRefresh(),
+          onRefresh: () async {
+            context.read<ProjectsBloc>().add(const ProjectsEvent.refreshProjects());
+          },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: CustomScrollView(
@@ -40,7 +35,6 @@ class ProjectsDashboardView extends StatelessWidget {
                   backgroundColor: theme.scaffoldBackgroundColor,
                   surfaceTintColor: theme.scaffoldBackgroundColor,
                   toolbarHeight: 150.h,
-
                   title: DashboardHeaderSection(
                     userName: 'Abdelrahman',
                     onSettingsPressed: () {},
@@ -49,40 +43,70 @@ class ProjectsDashboardView extends StatelessWidget {
                 ),
 
                 const SliverToBoxAdapter(child: SizedBox(height: 12)),
-
-                if (projects.isEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 60.h),
-                      child: ProjectsEmptyUI(
-                        onCreateProjectPressed: () =>
-                            _openAddTaskSheet(context),
+ 
+                // 🟢 FIXED: Removed the outer SliverToBoxAdapter container.
+                BlocBuilder<ProjectsBloc, ProjectsState>(
+                  bloc: context.read<ProjectsBloc>()..add(const ProjectsEvent.started()),
+                  builder: (innerContext, state) {
+                    return state.when(
+                      // 🟢 Box widgets wrapped in SliverToBoxAdapter internally
+                      initial: () => const SliverToBoxAdapter(
+                        child: SizedBox.shrink(),
                       ),
-                    ),
-                  )
-                else
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      if (index == projects.length) {
-                        return GestureDetector(
-                          onTap: () => _openAddTaskSheet(context),
-                          child: const _StartNewInitiativeCard(),
-                        );
-                      }
-
-                      final project = projects[index];
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: ProjectCardWidget(
-                          title: project.title,
-                          description: project.description,
-                          status: project.status,
-                          dueDate: 'Due tomorrow',
-                          onTap: () {},
+                      loading: () => const SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 200,
+                          child: Center(child: CircularProgressIndicator.adaptive()),
                         ),
-                      );
-                    }, childCount: projects.length + 1),
-                  ),
+                      ),
+                      error: (message) => SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 200,
+                          child: Center(child: Text(message)),
+                        ),
+                      ),
+                      empty: () => SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 60.h),
+                          child: Column(
+                            children: [
+                              ProjectsEmptyUI(
+                                onCreateProjectPressed: () => _openAddTaskSheet(context),
+                              ),
+                              const _StartNewInitiativeCard(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // 🟢 Returns a native SliverList directly to the viewport
+                      loaded: (projects) => SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            if (index == projects.length) {
+                              return GestureDetector(
+                                onTap: () => _openAddTaskSheet(context),
+                                child: const _StartNewInitiativeCard(),
+                              );
+                            }
+
+                            final project = projects[index];
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: ProjectCardWidget(
+                                title: project.title,
+                                description: project.description,
+                                status: project.status,
+                                dueDate: 'Due tomorrow',
+                                onTap: () {},
+                              ),
+                            );
+                          },
+                          childCount: projects.length + 1,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -96,7 +120,11 @@ class ProjectsDashboardView extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => AddTaskBottomSheet(onTaskCreated: handleTaskCreation),
+      builder: (_) => AddTaskBottomSheet(
+        onTaskCreated: (newProject) {
+          context.read<ProjectsBloc>().add(ProjectsEvent.addNewProject(newProject));
+        },
+      ),
     );
   }
 }
