@@ -7,9 +7,9 @@ part 'user_model.g.dart';
 @freezed
 abstract class UserModel with _$UserModel {
   const factory UserModel({
-    required String id,
-    required String name,
-    required String email,
+    required String? id,
+    required String? name,
+    required String? email,
     required String? avatarUrl,
   }) = _UserModel;
 
@@ -20,5 +20,5 @@ abstract class UserModel with _$UserModel {
 
 extension UserModelX on UserModel {
   UserEntity toEntity() =>
-      UserEntity(id: id, name: name, email: email, avatarUrl: avatarUrl);
+      UserEntity(id: id??"", name: name??"" , email: email??"", avatarUrl: avatarUrl);
 }

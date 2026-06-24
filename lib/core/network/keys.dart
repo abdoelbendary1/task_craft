@@ -1,0 +1,3 @@
+final supabaseURL = "https://qgfhhtdlmnbfwflexduz.supabase.co";
+final supabaseAnonKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFnZmhodGRsbW5iZndmbGV4ZHV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODE3MTgsImV4cCI6MjA5Nzg1NzcxOH0.HG8hOXXfiOIdPsKyrr4TiA2S_tQSlXbPZtw7phhj-yE";

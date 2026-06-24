@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:task_craft/features/auth/domain/usecases/auth_useCases.dart';
 import 'package:task_craft/features/auth/presentation/bloc/user_bloc/user_bloc.dart';
+import 'package:task_craft/features/profile/domain/entities/user_entity.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -38,7 +39,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           (failure) =>
               emit(AuthState.unauthenticated(errorMessage: failure.toString())),
           (userEntity) {
-            emit(AuthState.authenticated(userId: userEntity.id));
+            emit(AuthState.authenticated(user: userEntity));
             _userBloc.add(UserEvent.profileSaved(userEntity));
           },
         );
@@ -64,7 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           (failure) =>
               emit(AuthState.unauthenticated(errorMessage: failure.toString())),
           (userEntity) {
-            emit(AuthState.authenticated(userId: userEntity.id));
+            emit(AuthState.authenticated(user: userEntity));
             _userBloc.add(UserEvent.profileSaved(userEntity));
           },
         );

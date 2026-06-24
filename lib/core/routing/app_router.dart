@@ -15,27 +15,27 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 final appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.home,
-  // 🔄 1. DYNAMIC AUTHENTICATION REDIRECT GUARD
-  // redirect: (context, state) {
-  //   final authState = context.read<AuthBloc>().state;
+  redirect: (context, state) {
+    final authState = context.read<AuthBloc>().state;
 
-  //   // Check if the user is logged in based on your AuthBloc state
-  //   final bool isLoggedIn = authState.maybeWhen(
-  //     authenticated: (_) => true,
-  //     orElse: () => false,
-  //   );
+    // Check if the user is logged in based on your AuthBloc state
+    final bool isLoggedIn = authState.maybeWhen(
+      authenticated: (_) => true,
+      orElse: () => false,
+    );
 
-  //   final bool isLoggingIn = state.matchedLocation == AppRoutes.login;
+    final bool isLoggingIn = state.matchedLocation == '/login';
 
-  //   // If not logged in and trying to access app pages -> Force redirect to Login
-  //   if (!isLoggedIn && !isLoggingIn) return AppRoutes.login;
+    // If not logged in and trying to access app pages -> Force redirect to Login
+    if (!isLoggedIn && !isLoggingIn) return '/login';
 
-  //   // If logged in and trying to view Login page -> Push them to Home instead
-  //   if (isLoggedIn && isLoggingIn) return AppRoutes.home;
+    // If logged in and trying to view Login page -> Push them to Home instead
+    if (isLoggedIn && isLoggingIn) return '/home';
 
-  //   // No redirection needed, proceed normally
-  //   return null;
-  // }, // شاشة البداية
+    // No redirection needed, proceed normally
+    return null;
+  },
+
   routes: $appRoutes,
 );
 

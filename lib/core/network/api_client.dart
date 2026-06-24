@@ -1,36 +1,59 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task_craft/core/network/keys.dart';
+import 'package:task_craft/features/auth/data/datasources/auth_local_data_source.dart';
 import '../../features/home/data/models/project_model.dart';
 
 @module
 abstract class RegisterModule {
-  // 🟢 1. Register Dio as a Lazy Singleton
   @lazySingleton
- @lazySingleton
-  Dio get dio {
+  Dio dio(AuthLocalDataSource authLocalDataSource) {
+    // 🟢 Replace this string with the actual public anon JWT key from your Supabase Dashboard
+
     final dioInstance = Dio(
       BaseOptions(
-        // 🟢 Directing traffic to JSONPlaceholder's core branch
-        baseUrl: 'https://jsonplaceholder.typicode.com/', 
+        // 🟢 Pointing directly to your unique Supabase REST v1 engine deployment
+        baseUrl: 'https://qgfhhtdlmnbfwflexduz.supabase.co/rest/v1/',
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          // 🟢 Supabase Gateway identity authorization parameters
+          'apikey': supabaseAnonKey,
+          // 🔥 CRITICAL: PostgREST won't pass back created/updated records without this header!
+          'Prefer': 'return=representation',
         },
       ),
     );
 
-    // 🟢 Interceptor wrapper safely catches public API rate limits or drops
     dioInstance.interceptors.add(
       InterceptorsWrapper(
-        onError: (DioException error, handler) {
-          if (error.type == DioExceptionType.connectionTimeout || 
-              error.type == DioExceptionType.receiveTimeout) {
-            print('⚠️ JSONPlaceholder timed out. Serving local storage data fallback!');
+        onRequest: (options, handler) async {
+          // Automatically extract the encrypted token from hardware keychains
+          final token = await authLocalDataSource.getAccessToken();
+
+          if (token != null && token.isNotEmpty) {
+            // If the user logged in, use their private account session token
+            options.headers['Authorization'] = 'Bearer $token';
+          } else {
+            // Fall back to public anon token if they aren't authenticated yet
+            options.headers['Authorization'] = 'Bearer $supabaseAnonKey';
           }
-          return handler.next(error); // Pass failure safely through to Clean Architecture failures wrapper
+
+          return handler.next(options); // Continue out to the web network
+        },
+        onError: (DioException error, handler) {
+          if (error.response?.statusCode == 401) {
+            print(
+              '❌ Session expired or invalid token! Routing to login flow...',
+            );
+          }
+          return handler.next(error);
         },
       ),
     );
@@ -39,8 +62,18 @@ abstract class RegisterModule {
   }
 
   // 🟢 2. Register your opened Hive Cache Box
- @preResolve
+  @preResolve
   Future<Box<ProjectModel>> get projectBox async {
     return await Hive.openBox<ProjectModel>('projects_cache_box');
   }
+
+  @lazySingleton
+  FlutterSecureStorage get secureStorage => const FlutterSecureStorage(
+    // 🟢 Android options to ensure encrypted backups function correctly
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+  @lazySingleton
+  SupabaseClient get supabaseClient => Supabase.instance.client;
+  @lazySingleton
+  Connectivity get connectivity => Connectivity();
 }

@@ -1,45 +1,37 @@
-// data/datasources/auth_remote_data_source.dart
+// lib/features/auth/data/datasources/auth_local_data_source.dart
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
-import 'package:task_craft/features/profile/data/models/user_model.dart';
 
 abstract class AuthLocalDataSource {
-  Future<UserModel?> login({required String email, required String password});
-  Future<UserModel?> signUp({
-    required String name,
-    required String email,
-    required String password,
-  });
-  Future<UserModel?> getCurrentUser();
-  Future<void> logout();
+  Future<String?> getAccessToken();
+  Future<void> saveAccessToken(String token);
+  Future<void> clearSession();
 }
 
 @LazySingleton(as: AuthLocalDataSource)
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  AuthLocalDataSourceImpl();
+  final FlutterSecureStorage _secureStorage;
+
+  // 🟢 Secure storage is injected here automatically by Injectable
+  AuthLocalDataSourceImpl(this._secureStorage);
+
+  static const _tokenKey = 'supabase_access_token';
 
   @override
-  Future<UserModel?> login({
-    required String email,
-    required String password,
-  }) async {
-    // 1. Authenticate with Supabase Auth
+  Future<String?> getAccessToken() async {
+    // 🟢 Read directly from the hardware-backed keychain/keystore container
+    return await _secureStorage.read(key: _tokenKey);
   }
 
   @override
-  Future<UserModel?> signUp({
-    required String name,
-    required String email,
-    required String password,
-  }) async {
-    // 1. Create account in Supabase Auth
+  Future<void> saveAccessToken(String token) async {
+    // 🟢 Write the token string with encryption enabled
+    await _secureStorage.write(key: _tokenKey, value: token);
   }
 
   @override
-  Future<UserModel?> getCurrentUser() async {}
-
-  @override
-  Future<void> logout() async {}
-
-  // Helper method to fetch and parse profile metadata from DB
-  Future<UserModel?> _fetchUserProfile(String userId) async {}
+  Future<void> clearSession() async {
+    // 🟢 Erase the token securely when logging out
+    await _secureStorage.delete(key: _tokenKey);
+  }
 }

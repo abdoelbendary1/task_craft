@@ -9,10 +9,13 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:hive/hive.dart' as _i979;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import '../../features/auth/data/datasources/auth_local_data_source.dart'
     as _i852;
@@ -54,25 +57,39 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.projectBox,
       preResolve: true,
     );
-    gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
-    gh.lazySingleton<_i853.AuthRemoteDataSource>(
-      () => _i853.AuthRemoteDataSourceImpl(),
+    gh.lazySingleton<_i558.FlutterSecureStorage>(
+      () => registerModule.secureStorage,
     );
-    gh.lazySingleton<_i852.AuthLocalDataSource>(
-      () => _i852.AuthLocalDataSourceImpl(),
-    );
-    gh.lazySingleton<_i670.ProjectRemoteDataSource>(
-      () => _i670.ProjectRemoteDataSourceImpl(gh<_i361.Dio>()),
-    );
+    gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
+    gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
     gh.lazySingleton<_i217.ProjectLocalDataSource>(
       () =>
           _i217.ProjectLocalDataSourceImpl(gh<_i979.Box<_i341.ProjectModel>>()),
+    );
+    gh.lazySingleton<_i852.AuthLocalDataSource>(
+      () => _i852.AuthLocalDataSourceImpl(gh<_i558.FlutterSecureStorage>()),
+    );
+    gh.lazySingleton<_i361.Dio>(
+      () => registerModule.dio(gh<_i852.AuthLocalDataSource>()),
+    );
+    gh.lazySingleton<_i670.ProjectRemoteDataSource>(
+      () => _i670.ProjectRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i447.ProjectRepository>(
       () => _i403.ProjectRepositoryImpl(
         gh<_i670.ProjectRemoteDataSource>(),
         gh<_i217.ProjectLocalDataSource>(),
+        gh<_i895.Connectivity>(),
       ),
+    );
+    gh.lazySingleton<_i853.AuthRemoteDataSource>(
+      () => _i853.AuthRemoteDataSourceImpl(
+        gh<_i361.Dio>(),
+        gh<_i852.AuthLocalDataSource>(),
+      ),
+    );
+    gh.factory<_i1010.DeleteProject>(
+      () => _i1010.DeleteProject(gh<_i447.ProjectRepository>()),
     );
     gh.factory<_i1015.CreateProject>(
       () => _i1015.CreateProject(gh<_i447.ProjectRepository>()),
@@ -88,8 +105,13 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i853.AuthRemoteDataSource>(),
       ),
     );
-    gh.factory<_i1010.DeleteProject>(
-      () => _i1010.DeleteProject(gh<_i447.ProjectRepository>()),
+    gh.factory<_i479.ProjectsBloc>(
+      () => _i479.ProjectsBloc(
+        watchProjectsStream: gh<_i1025.WatchProjectsStream>(),
+        createProject: gh<_i1015.CreateProject>(),
+        deleteProject: gh<_i1010.DeleteProject>(),
+        refreshProjectList: gh<_i789.RefreshProjectList>(),
+      ),
     );
     gh.factory<_i467.LoginUseCase>(
       () => _i467.LoginUseCase(gh<_i723.AuthRepository>()),
@@ -106,14 +128,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i72.UserBloc>(
       () => _i72.UserBloc(
         fetchUserProfileUseCase: gh<_i986.FetchUserProfileUseCase>(),
-      ),
-    );
-    gh.factory<_i479.ProjectsBloc>(
-      () => _i479.ProjectsBloc(
-        watchProjectsStream: gh<_i1025.WatchProjectsStream>(),
-        createProject: gh<_i1015.CreateProject>(),
-        deleteProject: gh<_i1010.DeleteProject>(),
-        refreshProjectList: gh<_i789.RefreshProjectList>(),
       ),
     );
     gh.factory<_i797.AuthBloc>(

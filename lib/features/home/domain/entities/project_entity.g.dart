@@ -8,24 +8,20 @@ part of 'project_entity.dart';
 
 _ProjectEntity _$ProjectEntityFromJson(Map<String, dynamic> json) =>
     _ProjectEntity(
-      id: json['id'] as String,
-      userId: json['userId'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      status: json['status'] as String,
-      tasks: (json['tasks'] as List<dynamic>)
-          .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      isCompleted: json['isCompleted'] as bool,
+      id: json['id'] as String? ?? '',
+      creatorId: json['creatorId'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      statusId: (json['statusId'] as num?)?.toInt() ?? 0,
+      profiles: json['profiles'] as Map<String, dynamic>? ?? const {},
     );
 
 Map<String, dynamic> _$ProjectEntityToJson(_ProjectEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'userId': instance.userId,
+      'creatorId': instance.creatorId,
       'title': instance.title,
       'description': instance.description,
-      'status': instance.status,
-      'tasks': instance.tasks,
-      'isCompleted': instance.isCompleted,
+      'statusId': instance.statusId,
+      'profiles': instance.profiles,
     };

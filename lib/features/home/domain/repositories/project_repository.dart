@@ -7,7 +7,7 @@ abstract class ProjectRepository {
   Stream<List<ProjectEntity>> watchProjectsStream();
   
   // Background Sync Force Actions
-  Future<Either<Failure, Success>> refreshProjectsCache();
+  Future<Either<Failure, Success<List<ProjectEntity>>>> refreshProjectsCache();
   
   // Create & Delete Workspace Sync Controls
   Future<Either<Failure, Success<ProjectEntity>>> createProject(ProjectEntity project);

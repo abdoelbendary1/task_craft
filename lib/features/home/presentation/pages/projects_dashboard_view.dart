@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:task_craft/features/home/domain/entities/project_entity.dart';
+import 'package:task_craft/core/enum/project_status.dart';
 import 'package:task_craft/features/home/presentation/bloc/projects_bloc.dart';
 import 'package:task_craft/features/home/presentation/components/project_card_widget.dart';
 import 'package:task_craft/features/home/presentation/sections/add_task_bottom_sheet.dart';
@@ -20,7 +20,9 @@ class ProjectsDashboardView extends StatelessWidget {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            context.read<ProjectsBloc>().add(const ProjectsEvent.refreshProjects());
+            context.read<ProjectsBloc>().add(
+              const ProjectsEvent.refreshProjects(),
+            );
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -43,26 +45,49 @@ class ProjectsDashboardView extends StatelessWidget {
                 ),
 
                 const SliverToBoxAdapter(child: SizedBox(height: 12)),
- 
+
                 // 🟢 FIXED: Removed the outer SliverToBoxAdapter container.
-                BlocBuilder<ProjectsBloc, ProjectsState>(
-                  bloc: context.read<ProjectsBloc>()..add(const ProjectsEvent.started()),
+                BlocConsumer<ProjectsBloc, ProjectsState>(
+                  bloc: context.read<ProjectsBloc>()
+                    ..add(const ProjectsEvent.started()),
+                  listener: (context, state) {
+                    state.maybeWhen(
+                      orElse: () {},
+                      error: (message) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(message),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.error,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  // buildWhen: (previous, current) => previous != current,
                   builder: (innerContext, state) {
                     return state.when(
                       // 🟢 Box widgets wrapped in SliverToBoxAdapter internally
-                      initial: () => const SliverToBoxAdapter(
-                        child: SizedBox.shrink(),
-                      ),
+                      initial: () =>
+                          const SliverToBoxAdapter(child: SizedBox.shrink()),
                       loading: () => const SliverToBoxAdapter(
                         child: SizedBox(
                           height: 200,
-                          child: Center(child: CircularProgressIndicator.adaptive()),
+                          child: Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
                         ),
                       ),
                       error: (message) => SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 200,
-                          child: Center(child: Text(message)),
+                        child: Column(
+                          children: [
+                            ProjectsEmptyUI(
+                              onCreateProjectPressed: () =>
+                                  _openAddTaskSheet(context),
+                            ),
+                            const _StartNewInitiativeCard(),
+                          ],
                         ),
                       ),
                       empty: () => SliverToBoxAdapter(
@@ -71,7 +96,8 @@ class ProjectsDashboardView extends StatelessWidget {
                           child: Column(
                             children: [
                               ProjectsEmptyUI(
-                                onCreateProjectPressed: () => _openAddTaskSheet(context),
+                                onCreateProjectPressed: () =>
+                                    _openAddTaskSheet(context),
                               ),
                               const _StartNewInitiativeCard(),
                             ],
@@ -80,29 +106,44 @@ class ProjectsDashboardView extends StatelessWidget {
                       ),
                       // 🟢 Returns a native SliverList directly to the viewport
                       loaded: (projects) => SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            if (index == projects.length) {
-                              return GestureDetector(
-                                onTap: () => _openAddTaskSheet(context),
-                                child: const _StartNewInitiativeCard(),
-                              );
-                            }
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          if (index == projects.length) {
+                            return GestureDetector(
+                              onTap: () => _openAddTaskSheet(context),
+                              child: const _StartNewInitiativeCard(),
+                            );
+                          }
 
-                            final project = projects[index];
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
+                          final project = projects[index];
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            child: Dismissible(
+                              key: Key(project.id),
+                              onDismissed: (direction) {
+                                context.read<ProjectsBloc>().add(
+                                  ProjectsEvent.deleteProject(project),
+                                );
+                              },
+                              background: Container(
+                                color: Colors.red,
+                                alignment: Alignment.centerRight,
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ),
                               child: ProjectCardWidget(
                                 title: project.title,
                                 description: project.description,
-                                status: project.status,
+                                status: ProjectStatus.fromId(
+                                  project.statusId,
+                                ).label,
                                 dueDate: 'Due tomorrow',
                                 onTap: () {},
                               ),
-                            );
-                          },
-                          childCount: projects.length + 1,
-                        ),
+                            ),
+                          );
+                        }, childCount: projects.length + 1),
                       ),
                     );
                   },
@@ -122,7 +163,9 @@ class ProjectsDashboardView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => AddTaskBottomSheet(
         onTaskCreated: (newProject) {
-          context.read<ProjectsBloc>().add(ProjectsEvent.addNewProject(newProject));
+          context.read<ProjectsBloc>().add(
+            ProjectsEvent.addNewProject(newProject),
+          );
         },
       ),
     );

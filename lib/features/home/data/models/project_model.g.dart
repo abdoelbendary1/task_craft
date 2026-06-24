@@ -6,21 +6,21 @@ part of 'project_model.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
+class ProjectModelAdapter extends TypeAdapter<_ProjectModel> {
   @override
   final typeId = 0;
 
   @override
-  ProjectModel read(BinaryReader reader) {
+  _ProjectModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ProjectModel();
+    return _ProjectModel();
   }
 
   @override
-  void write(BinaryWriter writer, ProjectModel obj) {
+  void write(BinaryWriter writer, _ProjectModel obj) {
     writer.writeByte(0);
   }
 
@@ -42,25 +42,19 @@ class ProjectModelAdapter extends TypeAdapter<ProjectModel> {
 _ProjectModel _$ProjectModelFromJson(Map<String, dynamic> json) =>
     _ProjectModel(
       id: json['id'] as String? ?? "",
-      userId: json['userId'] as String? ?? "",
+      creatorId: json['creator_id'] as String? ?? "",
       title: json['title'] as String? ?? "",
-      description: json['body'] as String? ?? "",
-      status: json['status'] as String? ?? "",
-      tasks:
-          (json['tasks'] as List<dynamic>?)
-              ?.map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      isCompleted: json['isCompleted'] as bool? ?? false,
+      description: json['description'] as String? ?? "",
+      statusId: (json['status_id'] as num?)?.toInt() ?? 1,
+      profiles: json['profiles'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$ProjectModelToJson(_ProjectModel instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'userId': instance.userId,
+      'creator_id': instance.creatorId,
       'title': instance.title,
-      'body': instance.description,
-      'status': instance.status,
-      'tasks': instance.tasks,
-      'isCompleted': instance.isCompleted,
+      'description': instance.description,
+      'status_id': instance.statusId,
+      'profiles': instance.profiles,
     };

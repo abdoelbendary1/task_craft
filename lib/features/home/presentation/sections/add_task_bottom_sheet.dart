@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:task_craft/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:task_craft/features/home/domain/entities/project_entity.dart';
 import 'package:task_craft/features/home/presentation/components/app_choice_chip.dart';
 
@@ -111,10 +113,22 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_taskController.text.trim().isNotEmpty) {
-                        // widget.onTaskCreated(
-                          
-                        // );
-                        Navigator.pop(context);
+                        final authState = context.read<AuthBloc>().state;
+                        authState.maybeWhen(
+                          authenticated: (user) {
+                            widget.onTaskCreated(
+                              ProjectEntity(
+                                title: _taskController.text.trim(),
+                                statusId: 1,
+                                creatorId: user.id,
+                                description: "ssadsadsadsa dasdsa d",
+                                profiles: {},
+                              ),
+                            );
+                            Navigator.pop(context);
+                          },
+                          orElse: () => null,
+                        );
                       }
                     },
                     child: const Text('Create Task'),
