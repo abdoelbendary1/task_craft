@@ -17,6 +17,7 @@ class AppTheme {
         surface: AppColors.surfaceWhite,
         onPrimary: Colors.white,
         onSurface: AppColors.textDark,
+        
       ), // Centralized Navigation Bar Global Component Customizations
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: Colors.white,

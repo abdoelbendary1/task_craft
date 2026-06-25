@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_craft/core/routing/app_router.dart';
+import 'package:task_craft/core/services/notification/notification_service.dart';
+import 'package:task_craft/core/services/notification/notification_state.dart';
 import 'package:task_craft/features/auth/presentation/widgets/credential_form_card.dart';
 import '../bloc/auth_bloc.dart';
 
@@ -37,12 +39,10 @@ class _LoginScreenState extends State<LoginScreen> {
             state.maybeWhen(
               unauthenticated: (err) {
                 if (err != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(err),
-                      backgroundColor: Colors.redAccent,
-                    ),
-                  );
+                 NotificationService.show(
+      message: err,
+      type: NotificationType.error,
+    );
                 }
               },
               orElse: () {

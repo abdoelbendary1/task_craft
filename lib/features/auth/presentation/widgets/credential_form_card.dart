@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_craft/core/helpers/extentions.dart';
 import 'labeled_text_field.dart';
 import 'social_auth_buttons.dart';
 
@@ -112,20 +113,17 @@ class CredentialFormCard extends StatelessWidget {
           const SizedBox(height: 24),
 
           // Divider Section Layout
-          const Row(
+           Row(
             children: [
               Expanded(child: Divider(color: Colors.white12, thickness: 1)),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text(
-                  "OR CONTINUE WITH",
-                  style: TextStyle(
-                    color: Colors.white38,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                  ),
+              Text(
+                "OR CONTINUE WITH",
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
                 ),
-              ),
+              ).px(defaultHorizontal: 8),
               Expanded(child: Divider(color: Colors.white12, thickness: 1)),
             ],
           ),

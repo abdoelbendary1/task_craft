@@ -1,6 +1,7 @@
 // lib/features/profile/presentation/pages/profile_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:task_craft/core/helpers/extentions.dart';
 import 'package:task_craft/features/auth/presentation/bloc/auth_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -25,12 +26,9 @@ class ProfileScreen extends StatelessWidget {
               appBar: AppBar(
                 backgroundColor: Colors.white,
                 elevation: 0.5,
-                leading: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      user.avatarUrl ?? 'https://i.imgur.com/Dx8Z4S7.png',
-                    ),
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    user.avatarUrl ?? 'https://i.imgur.com/Dx8Z4S7.png',
                   ),
                 ),
                 title: const Text(
@@ -320,18 +318,15 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 4.0),
-        child: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF667085),
-            letterSpacing: 0.8,
-          ),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF667085),
+          letterSpacing: 0.8,
         ),
-      ),
+      ).pl(4),
     );
   }
 }
