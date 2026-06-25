@@ -1,17 +1,17 @@
-enum TaskPriority {
-  low(1, 'Low'),
-  medium(2, 'Medium'),
-  high(3, 'High');
+enum Priorities {
+  low(0, 'Low'),
+  medium(1, 'Medium'),
+  high(2, 'High');
 
   final int id;
   final String label;
 
-  const TaskPriority(this.id, this.label);
+  const Priorities(this.id, this.label);
 
-  static TaskPriority fromId(int id) {
-    return TaskPriority.values.firstWhere(
+  static Priorities fromId(int id) {
+    return Priorities.values.firstWhere(
       (e) => e.id == id,
-      orElse: () => TaskPriority.medium,
+      orElse: () => Priorities.medium,
     );
   }
 }

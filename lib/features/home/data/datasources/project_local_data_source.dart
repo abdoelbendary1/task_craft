@@ -10,20 +10,21 @@ abstract class ProjectLocalDataSource {
   Future<void> cacheSingleProject(ProjectModel project);
   Future<void> deleteCachedProject(String projectId);
 }
-@LazySingleton(as:ProjectLocalDataSource)
+
+@LazySingleton(as: ProjectLocalDataSource)
 class ProjectLocalDataSourceImpl implements ProjectLocalDataSource {
   final Box<ProjectModel> _projectBox;
 
   ProjectLocalDataSourceImpl(this._projectBox);
 
-@override
+  @override
   Stream<List<ProjectModel>> watchCachedProjects() async* {
-    // 1. Immediately yield whatever data is currently sitting in local cache storage
-    yield _projectBox.values.toList();
-    
-    // 2. FIXED: Changed 'move' to 'event' to cleanly handle incoming box updates
-    await for (final event in _projectBox.watch()) {
-      yield _projectBox.values.toList();
+    // 1. Instantly emit the current stable state sitting inside the database cache
+    yield _projectBox.values.whereType<ProjectModel>().toList();
+
+    // 2. Reactively emit clean updates whenever changes occur
+    await for (final _ in _projectBox.watch()) {
+      yield _projectBox.values.whereType<ProjectModel>().toList();
     }
   }
 
@@ -34,8 +35,16 @@ class ProjectLocalDataSourceImpl implements ProjectLocalDataSource {
 
   @override
   Future<void> cacheProjectsList(List<ProjectModel> projects) async {
-    for (var project in projects) {
-      await _projectBox.put(project.id.toString(), project);
+    // 🟢 1. Completely clear out stale rows so that if projects is empty, Hive is accurately emptied!
+    await _projectBox.clear();
+
+    // 🟢 2. Mass-insert items efficiently using putAll instead of a slow for-loop block
+    if (projects.isNotEmpty) {
+      // Map list entries to a key-value pair map configuration
+      final entries = {
+        for (var project in projects) project.id.toString(): project,
+      };
+      await _projectBox.putAll(entries);
     }
   }
 

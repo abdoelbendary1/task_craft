@@ -11,16 +11,17 @@ class AppTheme {
       brightness: Brightness.light,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.scaffoldBackground,
+
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
         surface: AppColors.surfaceWhite,
         onPrimary: Colors.white,
         onSurface: AppColors.textDark,
-        
       ), // Centralized Navigation Bar Global Component Customizations
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.scaffoldBackground,
+
         elevation: 10,
         height: 72.h,
         indicatorColor: const Color(

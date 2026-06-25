@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:task_craft/core/theme/app_colors.dart';
 
 enum ProjectStatus {
-  pending(1, 'Pending', AppColors.warning),
-  inProgress(2, 'In Progress' , AppColors.purple),
-  done(3, 'Done', AppColors.success),;
+  pending(0, 'Pending', AppColors.warning),
+  inProgress(1, 'In Progress' , AppColors.purple),
+  done(2, 'Done', AppColors.success),;
 
   // 🟢 Maps explicitly to your Supabase DB ID values
   final int id;

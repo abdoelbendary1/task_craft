@@ -3,8 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:task_craft/core/network/interceptor/api_endpoints.dart';
 import 'package:task_craft/core/network/keys.dart';
+import 'package:task_craft/core/services/sync/sync_action.dart';
 import 'package:task_craft/features/auth/data/datasources/auth_local_data_source.dart';
 import '../../features/home/data/models/project_model.dart';
 
@@ -17,7 +20,7 @@ abstract class RegisterModule {
     final dioInstance = Dio(
       BaseOptions(
         // 🟢 Pointing directly to your unique Supabase REST v1 engine deployment
-        baseUrl: 'https://qgfhhtdlmnbfwflexduz.supabase.co/rest/v1/',
+        baseUrl: ApiEndpoints.baseUrl,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -67,6 +70,9 @@ abstract class RegisterModule {
     return await Hive.openBox<ProjectModel>('projects_cache_box');
   }
 
+  @preResolve
+  Future<Box<SyncAction>> get syncActionBox async =>
+      await Hive.openBox<SyncAction>('sync_queue');
   @lazySingleton
   FlutterSecureStorage get secureStorage => const FlutterSecureStorage(
     // 🟢 Android options to ensure encrypted backups function correctly
@@ -76,4 +82,7 @@ abstract class RegisterModule {
   SupabaseClient get supabaseClient => Supabase.instance.client;
   @lazySingleton
   Connectivity get connectivity => Connectivity();
+  @preResolve
+  Future<SharedPreferences> get sharedPreferences async =>
+      await SharedPreferences.getInstance();
 }

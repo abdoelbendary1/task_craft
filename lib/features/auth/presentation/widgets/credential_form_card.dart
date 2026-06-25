@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:task_craft/core/helpers/extentions.dart';
+import 'package:task_craft/core/theme/app_colors.dart';
+import 'package:task_craft/shared/components/app_button.dart';
 import 'labeled_text_field.dart';
-import 'social_auth_buttons.dart';
 
 class CredentialFormCard extends StatelessWidget {
   final TextEditingController emailController;
@@ -26,7 +27,7 @@ class CredentialFormCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: const Color(0xff111614),
+        color: AppColors.secondary,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white10, width: 1),
       ),
@@ -78,42 +79,17 @@ class CredentialFormCard extends StatelessWidget {
           // Core Sign In Button implementation
           SizedBox(
             height: 48,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff00e676),
-                disabledBackgroundColor: const Color(
-                  0xff00e676,
-                ).withOpacity(0.5),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                elevation: 0,
-              ),
-              onPressed: isLoading ? null : onSubmit,
-              child: isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      isSignUpMode ? "SIGN UP" : "SIGN IN",
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
+            child: AppButton(
+              text: isSignUpMode ? "SIGN UP" : "Login",
+              variant: AppButtonVariant.filled,
+              isLoading: isLoading,
+              onPressed: onSubmit,
             ),
           ),
           const SizedBox(height: 24),
 
           // Divider Section Layout
-           Row(
+          Row(
             children: [
               Expanded(child: Divider(color: Colors.white12, thickness: 1)),
               Text(

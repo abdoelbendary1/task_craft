@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_craft/core/helpers/extentions.dart';
+import 'package:task_craft/core/theme/cubit/theme_cubit.dart';
+import 'package:task_craft/core/theme/cubit/theme_state.dart';
 import 'package:task_craft/features/auth/presentation/bloc/auth_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -181,15 +183,23 @@ class ProfileScreen extends StatelessWidget {
                             true,
                           ),
                           const Divider(height: 1, color: Color(0xFFEAECF0)),
-                          _buildSettingTile(
-                            Icons.dark_mode_outlined,
-                            'Dark Mode',
-                            false,
-                            trailingWidget: Switch(
-                              value: false,
-                              activeColor: brandColor,
-                              onChanged: (val) {},
-                            ),
+                          BlocBuilder<ThemeCubit, ThemeState>(
+                            builder: (context, state) {
+                              final isDarkMode =
+                                  state.themeMode == ThemeMode.dark;
+                              return _buildSettingTile(
+                                Icons.dark_mode_outlined,
+                                'Dark Mode',
+                                true,
+                                trailingWidget: Switch(
+                                  value: isDarkMode,
+                                  activeColor: brandColor,
+                                  onChanged: (val) {
+                                    context.read<ThemeCubit>().toggleTheme(val);
+                                  },
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

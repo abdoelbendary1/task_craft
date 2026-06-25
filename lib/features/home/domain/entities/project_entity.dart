@@ -12,7 +12,8 @@ abstract class ProjectEntity with _$ProjectEntity {
     @Default('') String title,
     @Default('') String description,
     @Default(0) int statusId,
-    @Default({}) final Map<String, dynamic> profiles,
+    DateTime? createdAt,
+    DateTime? dueDate,
   }) = _ProjectEntity;
 
   factory ProjectEntity.fromJson(Map<String, dynamic> json) =>
@@ -26,6 +27,7 @@ extension ProjectEntityX on ProjectEntity {
     title: title,
     description: description,
     statusId: statusId,
-    profiles: profiles,
+    createdAt: createdAt ?? DateTime.now(),
+    dueDate: dueDate,
   );
 }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectEntity {
 
- String get id; String get creatorId; String get title; String get description; int get statusId; Map<String, dynamic> get profiles;
+ String get id; String get creatorId; String get title; String get description; int get statusId; DateTime? get createdAt; DateTime? get dueDate;
 /// Create a copy of ProjectEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProjectEntityCopyWith<ProjectEntity> get copyWith => _$ProjectEntityCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&const DeepCollectionEquality().equals(other.profiles, profiles));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,const DeepCollectionEquality().hash(profiles));
+int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,createdAt,dueDate);
 
 @override
 String toString() {
-  return 'ProjectEntity(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, profiles: $profiles)';
+  return 'ProjectEntity(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, createdAt: $createdAt, dueDate: $dueDate)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProjectEntityCopyWith<$Res>  {
   factory $ProjectEntityCopyWith(ProjectEntity value, $Res Function(ProjectEntity) _then) = _$ProjectEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String creatorId, String title, String description, int statusId, Map<String, dynamic> profiles
+ String id, String creatorId, String title, String description, int statusId, DateTime? createdAt, DateTime? dueDate
 });
 
 
@@ -65,15 +65,16 @@ class _$ProjectEntityCopyWithImpl<$Res>
 
 /// Create a copy of ProjectEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? creatorId = null,Object? title = null,Object? description = null,Object? statusId = null,Object? profiles = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? creatorId = null,Object? title = null,Object? description = null,Object? statusId = null,Object? createdAt = freezed,Object? dueDate = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,creatorId: null == creatorId ? _self.creatorId : creatorId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,statusId: null == statusId ? _self.statusId : statusId // ignore: cast_nullable_to_non_nullable
-as int,profiles: null == profiles ? _self.profiles : profiles // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -158,10 +159,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String creatorId,  String title,  String description,  int statusId,  Map<String, dynamic> profiles)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String creatorId,  String title,  String description,  int statusId,  DateTime? createdAt,  DateTime? dueDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectEntity() when $default != null:
-return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.profiles);case _:
+return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.createdAt,_that.dueDate);case _:
   return orElse();
 
 }
@@ -179,10 +180,10 @@ return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.sta
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String creatorId,  String title,  String description,  int statusId,  Map<String, dynamic> profiles)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String creatorId,  String title,  String description,  int statusId,  DateTime? createdAt,  DateTime? dueDate)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectEntity():
-return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.profiles);case _:
+return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.createdAt,_that.dueDate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +200,10 @@ return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.sta
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String creatorId,  String title,  String description,  int statusId,  Map<String, dynamic> profiles)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String creatorId,  String title,  String description,  int statusId,  DateTime? createdAt,  DateTime? dueDate)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectEntity() when $default != null:
-return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.profiles);case _:
+return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.createdAt,_that.dueDate);case _:
   return null;
 
 }
@@ -214,7 +215,7 @@ return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.sta
 @JsonSerializable()
 
 class _ProjectEntity implements ProjectEntity {
-  const _ProjectEntity({this.id = '', this.creatorId = '', this.title = '', this.description = '', this.statusId = 0, final  Map<String, dynamic> profiles = const {}}): _profiles = profiles;
+  const _ProjectEntity({this.id = '', this.creatorId = '', this.title = '', this.description = '', this.statusId = 0, this.createdAt, this.dueDate});
   factory _ProjectEntity.fromJson(Map<String, dynamic> json) => _$ProjectEntityFromJson(json);
 
 @override@JsonKey() final  String id;
@@ -222,13 +223,8 @@ class _ProjectEntity implements ProjectEntity {
 @override@JsonKey() final  String title;
 @override@JsonKey() final  String description;
 @override@JsonKey() final  int statusId;
- final  Map<String, dynamic> _profiles;
-@override@JsonKey() Map<String, dynamic> get profiles {
-  if (_profiles is EqualUnmodifiableMapView) return _profiles;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableMapView(_profiles);
-}
-
+@override final  DateTime? createdAt;
+@override final  DateTime? dueDate;
 
 /// Create a copy of ProjectEntity
 /// with the given fields replaced by the non-null parameter values.
@@ -243,16 +239,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&const DeepCollectionEquality().equals(other._profiles, _profiles));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,const DeepCollectionEquality().hash(_profiles));
+int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,createdAt,dueDate);
 
 @override
 String toString() {
-  return 'ProjectEntity(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, profiles: $profiles)';
+  return 'ProjectEntity(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, createdAt: $createdAt, dueDate: $dueDate)';
 }
 
 
@@ -263,7 +259,7 @@ abstract mixin class _$ProjectEntityCopyWith<$Res> implements $ProjectEntityCopy
   factory _$ProjectEntityCopyWith(_ProjectEntity value, $Res Function(_ProjectEntity) _then) = __$ProjectEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String creatorId, String title, String description, int statusId, Map<String, dynamic> profiles
+ String id, String creatorId, String title, String description, int statusId, DateTime? createdAt, DateTime? dueDate
 });
 
 
@@ -280,15 +276,16 @@ class __$ProjectEntityCopyWithImpl<$Res>
 
 /// Create a copy of ProjectEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? creatorId = null,Object? title = null,Object? description = null,Object? statusId = null,Object? profiles = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? creatorId = null,Object? title = null,Object? description = null,Object? statusId = null,Object? createdAt = freezed,Object? dueDate = freezed,}) {
   return _then(_ProjectEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,creatorId: null == creatorId ? _self.creatorId : creatorId // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,statusId: null == statusId ? _self.statusId : statusId // ignore: cast_nullable_to_non_nullable
-as int,profiles: null == profiles ? _self._profiles : profiles // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

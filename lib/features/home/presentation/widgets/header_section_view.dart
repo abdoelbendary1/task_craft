@@ -17,18 +17,13 @@ class HeaderSectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         UserHeader(userName: userName, onSettingsPressed: onSettingsPressed),
         16.verticalSpace,
-        ProjectsHeader( onCreateProjectPressed: onCreateProjectPressed),    
-        16.verticalSpace,
-
+        ProjectsHeader(onCreateProjectPressed: onCreateProjectPressed),
       ],
     );
   }
 }
-
-

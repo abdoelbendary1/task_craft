@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:task_craft/core/theme/app_colors.dart';
 
 class LabeledTextField extends StatelessWidget {
   final String label;
@@ -31,8 +32,8 @@ class LabeledTextField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white70,
+              style: TextStyle(
+                color: AppColors.activeBlueText,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
@@ -46,13 +47,13 @@ class LabeledTextField extends StatelessWidget {
           controller: controller,
           obscureText: obscure,
           keyboardType: keyboardType,
-          style: const TextStyle(color: Colors.white, fontSize: 15),
+          style: TextStyle(color: AppColors.activeBlueBg, fontSize: 15),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: Colors.white38, size: 20),
             hintText: hintText,
             hintStyle: const TextStyle(color: Colors.white24, fontSize: 15),
             filled: true,
-            fillColor: const Color(0xff090d0b),
+            fillColor: AppColors.activeBlueText,
             contentPadding: const EdgeInsets.symmetric(vertical: 14),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -60,7 +61,7 @@ class LabeledTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xff00e676), width: 1),
+              borderSide: BorderSide(color: AppColors.primary, width: 1),
             ),
           ),
         ),

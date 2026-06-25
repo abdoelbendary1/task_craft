@@ -7,35 +7,37 @@ part 'project_model.freezed.dart';
 part 'project_model.g.dart';
 
 @freezed
+@freezed
 abstract class ProjectModel with _$ProjectModel {
-  @HiveType(typeId: 0) // 🟢 Assigned Hive Type ID
+  @HiveType(typeId: 0)
   const factory ProjectModel({
     @HiveField(0) @Default("") String id,
-    @HiveField(1) @JsonKey(name: 'creator_id') @Default("") String creatorId,
+    @HiveField(1)
+    @JsonKey(name: 'creator_id')
+    String?
+    creatorId, // ممتاز إنه Nullable لأن السيرفر أحياناً بياخده من الـ Auth Session
     @HiveField(2) @Default("") String title,
-    // 🟢 Changed key from 'body' to 'description' to match your Supabase column
     @HiveField(3) @JsonKey(name: 'description') @Default("") String description,
     @HiveField(4) @JsonKey(name: 'status_id') @Default(1) int statusId,
-    @HiveField(5)
-    @JsonKey(name: 'profiles')
-    final Map<String, dynamic>? profiles,
+    @HiveField(5) @JsonKey(name: 'created_at') DateTime? createdAt,
+    @HiveField(6) @JsonKey(name: 'due_date') DateTime? dueDate,
   }) = _ProjectModel;
 
+  // 🟢 إجبار الـ Generator على قراءة الـ من الـ factory الفوقاني
   factory ProjectModel.fromJson(Map<String, dynamic> json) =>
       _$ProjectModelFromJson(json);
 }
 
 extension ProjectModelX on ProjectModel {
   ProjectEntity toEntity() {
-    final profileData = profiles;
-
     return ProjectEntity(
       id: id,
-      creatorId: creatorId,
+      creatorId: creatorId ?? "",
       title: title,
       description: description,
       statusId: ProjectStatus.fromId(statusId).id,
-      profiles: profileData ?? {},
+      createdAt: createdAt,
+      dueDate: dueDate,
     );
   }
 }

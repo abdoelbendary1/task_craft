@@ -15,6 +15,7 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 final appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.home,
+  
   redirect: (context, state) {
     final authState = context.read<AuthBloc>().state;
 

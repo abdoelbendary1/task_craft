@@ -21,23 +21,10 @@ class ProjectsView extends StatelessWidget {
           ),
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            slivers: [
-          BuildHomeHeader( ),
-           BuildHomeBody()    ,          ],
+            slivers: [BuildHomeHeader(), BuildHomeBody()],
           ).px(defaultHorizontal: 16),
         ),
       ),
     );
   }
-
- 
-
-
-
-
-
-  
-
- 
 }
-

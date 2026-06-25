@@ -15,8 +15,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectModel {
 
-@HiveField(0) String get id;@HiveField(1)@JsonKey(name: 'creator_id') String get creatorId;@HiveField(2) String get title;// 🟢 Changed key from 'body' to 'description' to match your Supabase column
-@HiveField(3)@JsonKey(name: 'description') String get description;@HiveField(4)@JsonKey(name: 'status_id') int get statusId;@HiveField(5)@JsonKey(name: 'profiles') Map<String, dynamic>? get profiles;
+@HiveField(0) String get id;@HiveField(1)@JsonKey(name: 'creator_id') String? get creatorId;// ممتاز إنه Nullable لأن السيرفر أحياناً بياخده من الـ Auth Session
+@HiveField(2) String get title;@HiveField(3)@JsonKey(name: 'description') String get description;@HiveField(4)@JsonKey(name: 'status_id') int get statusId;@HiveField(5)@JsonKey(name: 'created_at') DateTime? get createdAt;@HiveField(6)@JsonKey(name: 'due_date') DateTime? get dueDate;
 /// Create a copy of ProjectModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,16 @@ $ProjectModelCopyWith<ProjectModel> get copyWith => _$ProjectModelCopyWithImpl<P
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&const DeepCollectionEquality().equals(other.profiles, profiles));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,const DeepCollectionEquality().hash(profiles));
+int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,createdAt,dueDate);
 
 @override
 String toString() {
-  return 'ProjectModel(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, profiles: $profiles)';
+  return 'ProjectModel(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, createdAt: $createdAt, dueDate: $dueDate)';
 }
 
 
@@ -49,7 +49,7 @@ abstract mixin class $ProjectModelCopyWith<$Res>  {
   factory $ProjectModelCopyWith(ProjectModel value, $Res Function(ProjectModel) _then) = _$ProjectModelCopyWithImpl;
 @useResult
 $Res call({
-@HiveField(0) String id,@HiveField(1)@JsonKey(name: 'creator_id') String creatorId,@HiveField(2) String title,@HiveField(3)@JsonKey(name: 'description') String description,@HiveField(4)@JsonKey(name: 'status_id') int statusId,@HiveField(5)@JsonKey(name: 'profiles') Map<String, dynamic>? profiles
+@HiveField(0) String id,@HiveField(1)@JsonKey(name: 'creator_id') String? creatorId,@HiveField(2) String title,@HiveField(3)@JsonKey(name: 'description') String description,@HiveField(4)@JsonKey(name: 'status_id') int statusId,@HiveField(5)@JsonKey(name: 'created_at') DateTime? createdAt,@HiveField(6)@JsonKey(name: 'due_date') DateTime? dueDate
 });
 
 
@@ -66,15 +66,16 @@ class _$ProjectModelCopyWithImpl<$Res>
 
 /// Create a copy of ProjectModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? creatorId = null,Object? title = null,Object? description = null,Object? statusId = null,Object? profiles = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? creatorId = freezed,Object? title = null,Object? description = null,Object? statusId = null,Object? createdAt = freezed,Object? dueDate = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,creatorId: null == creatorId ? _self.creatorId : creatorId // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,creatorId: freezed == creatorId ? _self.creatorId : creatorId // ignore: cast_nullable_to_non_nullable
+as String?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,statusId: null == statusId ? _self.statusId : statusId // ignore: cast_nullable_to_non_nullable
-as int,profiles: freezed == profiles ? _self.profiles : profiles // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -159,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)@JsonKey(name: 'creator_id')  String creatorId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'description')  String description, @HiveField(4)@JsonKey(name: 'status_id')  int statusId, @HiveField(5)@JsonKey(name: 'profiles')  Map<String, dynamic>? profiles)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)@JsonKey(name: 'creator_id')  String? creatorId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'description')  String description, @HiveField(4)@JsonKey(name: 'status_id')  int statusId, @HiveField(5)@JsonKey(name: 'created_at')  DateTime? createdAt, @HiveField(6)@JsonKey(name: 'due_date')  DateTime? dueDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectModel() when $default != null:
-return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.profiles);case _:
+return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.createdAt,_that.dueDate);case _:
   return orElse();
 
 }
@@ -180,10 +181,10 @@ return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.sta
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)@JsonKey(name: 'creator_id')  String creatorId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'description')  String description, @HiveField(4)@JsonKey(name: 'status_id')  int statusId, @HiveField(5)@JsonKey(name: 'profiles')  Map<String, dynamic>? profiles)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@HiveField(0)  String id, @HiveField(1)@JsonKey(name: 'creator_id')  String? creatorId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'description')  String description, @HiveField(4)@JsonKey(name: 'status_id')  int statusId, @HiveField(5)@JsonKey(name: 'created_at')  DateTime? createdAt, @HiveField(6)@JsonKey(name: 'due_date')  DateTime? dueDate)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectModel():
-return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.profiles);case _:
+return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.createdAt,_that.dueDate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +201,10 @@ return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.sta
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@HiveField(0)  String id, @HiveField(1)@JsonKey(name: 'creator_id')  String creatorId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'description')  String description, @HiveField(4)@JsonKey(name: 'status_id')  int statusId, @HiveField(5)@JsonKey(name: 'profiles')  Map<String, dynamic>? profiles)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@HiveField(0)  String id, @HiveField(1)@JsonKey(name: 'creator_id')  String? creatorId, @HiveField(2)  String title, @HiveField(3)@JsonKey(name: 'description')  String description, @HiveField(4)@JsonKey(name: 'status_id')  int statusId, @HiveField(5)@JsonKey(name: 'created_at')  DateTime? createdAt, @HiveField(6)@JsonKey(name: 'due_date')  DateTime? dueDate)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectModel() when $default != null:
-return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.profiles);case _:
+return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.statusId,_that.createdAt,_that.dueDate);case _:
   return null;
 
 }
@@ -215,24 +216,17 @@ return $default(_that.id,_that.creatorId,_that.title,_that.description,_that.sta
 @JsonSerializable()
 @HiveType(typeId: 0)
 class _ProjectModel implements ProjectModel {
-  const _ProjectModel({@HiveField(0) this.id = "", @HiveField(1)@JsonKey(name: 'creator_id') this.creatorId = "", @HiveField(2) this.title = "", @HiveField(3)@JsonKey(name: 'description') this.description = "", @HiveField(4)@JsonKey(name: 'status_id') this.statusId = 1, @HiveField(5)@JsonKey(name: 'profiles') final  Map<String, dynamic>? profiles}): _profiles = profiles;
+  const _ProjectModel({@HiveField(0) this.id = "", @HiveField(1)@JsonKey(name: 'creator_id') this.creatorId, @HiveField(2) this.title = "", @HiveField(3)@JsonKey(name: 'description') this.description = "", @HiveField(4)@JsonKey(name: 'status_id') this.statusId = 1, @HiveField(5)@JsonKey(name: 'created_at') this.createdAt, @HiveField(6)@JsonKey(name: 'due_date') this.dueDate});
   factory _ProjectModel.fromJson(Map<String, dynamic> json) => _$ProjectModelFromJson(json);
 
 @override@JsonKey()@HiveField(0) final  String id;
-@override@HiveField(1)@JsonKey(name: 'creator_id') final  String creatorId;
+@override@HiveField(1)@JsonKey(name: 'creator_id') final  String? creatorId;
+// ممتاز إنه Nullable لأن السيرفر أحياناً بياخده من الـ Auth Session
 @override@JsonKey()@HiveField(2) final  String title;
-// 🟢 Changed key from 'body' to 'description' to match your Supabase column
 @override@HiveField(3)@JsonKey(name: 'description') final  String description;
 @override@HiveField(4)@JsonKey(name: 'status_id') final  int statusId;
- final  Map<String, dynamic>? _profiles;
-@override@HiveField(5)@JsonKey(name: 'profiles') Map<String, dynamic>? get profiles {
-  final value = _profiles;
-  if (value == null) return null;
-  if (_profiles is EqualUnmodifiableMapView) return _profiles;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableMapView(value);
-}
-
+@override@HiveField(5)@JsonKey(name: 'created_at') final  DateTime? createdAt;
+@override@HiveField(6)@JsonKey(name: 'due_date') final  DateTime? dueDate;
 
 /// Create a copy of ProjectModel
 /// with the given fields replaced by the non-null parameter values.
@@ -247,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&const DeepCollectionEquality().equals(other._profiles, _profiles));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectModel&&(identical(other.id, id) || other.id == id)&&(identical(other.creatorId, creatorId) || other.creatorId == creatorId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.statusId, statusId) || other.statusId == statusId)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,const DeepCollectionEquality().hash(_profiles));
+int get hashCode => Object.hash(runtimeType,id,creatorId,title,description,statusId,createdAt,dueDate);
 
 @override
 String toString() {
-  return 'ProjectModel(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, profiles: $profiles)';
+  return 'ProjectModel(id: $id, creatorId: $creatorId, title: $title, description: $description, statusId: $statusId, createdAt: $createdAt, dueDate: $dueDate)';
 }
 
 
@@ -267,7 +261,7 @@ abstract mixin class _$ProjectModelCopyWith<$Res> implements $ProjectModelCopyWi
   factory _$ProjectModelCopyWith(_ProjectModel value, $Res Function(_ProjectModel) _then) = __$ProjectModelCopyWithImpl;
 @override @useResult
 $Res call({
-@HiveField(0) String id,@HiveField(1)@JsonKey(name: 'creator_id') String creatorId,@HiveField(2) String title,@HiveField(3)@JsonKey(name: 'description') String description,@HiveField(4)@JsonKey(name: 'status_id') int statusId,@HiveField(5)@JsonKey(name: 'profiles') Map<String, dynamic>? profiles
+@HiveField(0) String id,@HiveField(1)@JsonKey(name: 'creator_id') String? creatorId,@HiveField(2) String title,@HiveField(3)@JsonKey(name: 'description') String description,@HiveField(4)@JsonKey(name: 'status_id') int statusId,@HiveField(5)@JsonKey(name: 'created_at') DateTime? createdAt,@HiveField(6)@JsonKey(name: 'due_date') DateTime? dueDate
 });
 
 
@@ -284,15 +278,16 @@ class __$ProjectModelCopyWithImpl<$Res>
 
 /// Create a copy of ProjectModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? creatorId = null,Object? title = null,Object? description = null,Object? statusId = null,Object? profiles = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? creatorId = freezed,Object? title = null,Object? description = null,Object? statusId = null,Object? createdAt = freezed,Object? dueDate = freezed,}) {
   return _then(_ProjectModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,creatorId: null == creatorId ? _self.creatorId : creatorId // ignore: cast_nullable_to_non_nullable
-as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String,creatorId: freezed == creatorId ? _self.creatorId : creatorId // ignore: cast_nullable_to_non_nullable
+as String?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,statusId: null == statusId ? _self.statusId : statusId // ignore: cast_nullable_to_non_nullable
-as int,profiles: freezed == profiles ? _self._profiles : profiles // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as int,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

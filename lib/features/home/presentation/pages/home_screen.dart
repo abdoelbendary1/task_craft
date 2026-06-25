@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_craft/core/di/injection.dart';
+import 'package:task_craft/features/add_project/bloc/new_project_bloc.dart';
 import 'package:task_craft/features/home/presentation/bloc/projects_bloc.dart';
 import 'package:task_craft/features/home/presentation/pages/projects_view.dart';
 
@@ -10,7 +11,10 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (_) => getIt<ProjectsBloc>())],
+      providers: [
+        BlocProvider(create: (_) => getIt<ProjectsBloc>()),
+        BlocProvider(create: (_) => getIt<NewProjectBloc>()),
+      ],
       child: const ProjectsView(),
     );
   }

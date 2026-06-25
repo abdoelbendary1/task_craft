@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 abstract class AuthLocalDataSource {
   Future<String?> getAccessToken();
+  
   Future<void> saveAccessToken(String token);
   Future<void> clearSession();
 }

@@ -18,8 +18,8 @@ class ProjectsEmptyUI extends StatelessWidget {
         const _EmptyStateIllustration(),
         SizedBox(height: 32.h),
         const _EmptyStateTextSection(),
-        SizedBox(height: 24.h),            const StartNewInitiativeCard(),
-    
+        // SizedBox(height: 24.h),            const StartNewInitiativeCard(),
+
         // _EmptyStateActionButton(onPressed: onCreateProjectPressed),
         // SizedBox(height: 32.h),
         // const _QuickStartDivider(),
@@ -27,7 +27,6 @@ class ProjectsEmptyUI extends StatelessWidget {
     ).px(defaultHorizontal: 16);
   }
 }
-
 
 class _EmptyStateIllustration extends StatelessWidget {
   const _EmptyStateIllustration();
@@ -72,5 +71,3 @@ class _EmptyStateTextSection extends StatelessWidget {
     );
   }
 }
-
-

@@ -4,9 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:task_craft/core/network/keys.dart';
+import 'package:task_craft/core/services/sync/sync_action.dart';
+import 'package:task_craft/core/theme/cubit/theme_cubit.dart';
+import 'package:task_craft/core/theme/cubit/theme_state.dart';
 import 'package:task_craft/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:task_craft/features/home/data/models/project_model.dart';
 import 'package:task_craft/features/home/data/models/task_model.dart';
+import 'package:task_craft/shared/widgets/connectivity_overlay_wrapper.dart';
 import 'core/di/injection.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
@@ -18,6 +22,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ProjectModelAdapter());
   Hive.registerAdapter(TaskModelAdapter());
+  Hive.registerAdapter(SyncActionInternal());
   // await Hive.openBox('app_cache');
   await configureDependencies();
 
@@ -33,19 +38,32 @@ class TaskCraftApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // Inject ScreenUtil for perfect responsive scaling rules globally
     return MultiBlocProvider(
-      providers: [BlocProvider(create: (context) => getIt<AuthBloc>())],
-      child: ScreenUtilInit(
-        designSize: const Size(375, 812),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) {
-          return MaterialApp.router(
-            routerConfig: appRouter,
-            // title: 'TaskCraft',
-            theme: AppTheme.lightTheme,
-            debugShowCheckedModeBanner: false,
-
-            // home: const HomePage(),
+      providers: [
+        BlocProvider(create: (context) => getIt<AuthBloc>()),
+        BlocProvider(create: (context) => getIt<ThemeCubit>()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeState>(
+        builder: (context, state) {
+          return ScreenUtilInit(
+            designSize: const Size(375, 812),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            builder: (context, child) {
+              return MaterialApp.router(
+                routerConfig: appRouter,
+                // title: 'TaskCraft',
+                darkTheme: AppTheme.darkTheme,
+                theme: AppTheme.lightTheme,
+                themeMode: state.themeMode,
+                debugShowCheckedModeBanner: false,
+                builder: (context, routerChild) {
+                  return ConnectivityOverlayWrapper(
+                    child: routerChild ?? const SizedBox.shrink(),
+                  );
+                },
+                // home: const HomePage(),
+              );
+            },
           );
         },
       ),
