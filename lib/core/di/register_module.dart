@@ -18,20 +18,21 @@ import '../../features/home/data/models/project_model.dart';
 
 @module
 abstract class RegisterModule {
-  
   // 🟢 حقن الـ Anon Key بشكل نظيف في الـ DI Container
   @Named('supabaseAnonKey')
-  String get supabaseAnonKey => 'your_actual_supabase_anon_key_here';
+  String get anonKey => '${supabaseAnonKey}';
 
   // 🔐 1. نسخة الـ Dio الخاصة بالـ Auth (منعزلة ومحمية من الـ Interceptors التانية)
   @lazySingleton
-  @Named('authDio') 
-  Dio authDio(@Named('supabaseAnonKey') String anonKey) { 
+  @Named('authDio')
+  Dio authDio(@Named('supabaseAnonKey') String anonKey) {
     return Dio(
       BaseOptions(
-        baseUrl: 'https://qgfhhtdlmnbfwflexduz.supabase.co/auth/v1',
+        baseUrl: ApiEndpoints.authBaseUrl,
         headers: {
           'apikey': anonKey,
+          // 👇 This tells Supabase "I am an official client app allowed to trigger signups"
+          'Authorization': 'Bearer $anonKey',
           'Content-Type': 'application/json',
         },
       ),
@@ -43,7 +44,7 @@ abstract class RegisterModule {
   Dio dio(AuthLocalDataSource authLocalDataSource) {
     final dioInstance = Dio(
       BaseOptions(
-        baseUrl: ApiEndpoints.restBaseUrl, 
+        baseUrl: ApiEndpoints.restBaseUrl,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -59,7 +60,7 @@ abstract class RegisterModule {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final token = await authLocalDataSource.getAccessToken();
-          
+
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           } else {
@@ -70,19 +71,24 @@ abstract class RegisterModule {
         onError: (DioException error, handler) async {
           if (error.response?.statusCode == 401) {
             final requestPath = error.requestOptions.path;
-            
-            if (requestPath.contains('logout') || 
-                requestPath.contains('token') || 
+
+            if (requestPath.contains('logout') ||
+                requestPath.contains('token') ||
                 requestPath.contains('profiles')) {
               return handler.next(error);
             }
 
-            if (requestPath.contains('projects') || requestPath.contains('tasks')) {
-              print('⚠️ Authorization failed for database operation: $requestPath');
-              return handler.next(error); 
+            if (requestPath.contains('projects') ||
+                requestPath.contains('tasks')) {
+              print(
+                '⚠️ Authorization failed for database operation: $requestPath',
+              );
+              return handler.next(error);
             }
 
-            print('❌ Session expired or invalid token! Instigating structural logouts...');
+            print(
+              '❌ Session expired or invalid token! Instigating structural logouts...',
+            );
             await authLocalDataSource.clearSession();
             getIt<AuthBloc>().add(const AuthEvent.loggedOut());
           }
@@ -110,8 +116,8 @@ abstract class RegisterModule {
 
   @lazySingleton
   FlutterSecureStorage get secureStorage => const FlutterSecureStorage(
-        aOptions: AndroidOptions(encryptedSharedPreferences: true),
-      );
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
   @lazySingleton
   SupabaseClient get supabaseClient => Supabase.instance.client;

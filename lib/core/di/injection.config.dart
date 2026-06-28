@@ -98,7 +98,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i454.SupabaseClient>(() => registerModule.supabaseClient);
     gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
     gh.factory<String>(
-      () => registerModule.supabaseAnonKey,
+      () => registerModule.anonKey,
       instanceName: 'supabaseAnonKey',
     );
     gh.lazySingleton<_i505.TaskLocalDataSource>(
@@ -121,13 +121,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i361.Dio>(
       () => registerModule.dio(gh<_i852.AuthLocalDataSource>()),
     );
-    gh.lazySingleton<_i310.SyncManager>(
-      () =>
-          _i310.SyncManager(gh<_i979.Box<_i599.SyncAction>>(), gh<_i361.Dio>()),
-    );
     gh.lazySingleton<_i557.ApiClient>(() => _i557.ApiClient(gh<_i361.Dio>()));
     gh.lazySingleton<_i864.TaskRemoteDataSource>(
       () => _i864.TaskRemoteDataSourceImpl(gh<_i557.ApiClient>()),
+    );
+    gh.lazySingleton<_i310.SyncManager>(
+      () => _i310.SyncManager(
+        gh<_i979.Box<_i599.SyncAction>>(),
+        gh<_i557.ApiClient>(),
+      ),
     );
     gh.lazySingleton<_i148.TaskRepository>(
       () => _i20.TaskRepositoryImpl(
