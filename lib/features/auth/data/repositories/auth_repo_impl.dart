@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:task_craft/core/errors/failures.dart';
-import 'package:task_craft/core/network/dio_error_handler.dart';
+import 'package:task_craft/core/errors/dio_error_handler.dart';
 import 'package:task_craft/features/auth/data/datasources/auth_remote_data_surce.dart';
 import 'package:task_craft/features/auth/domain/repositories/auth_repo.dart';
 import 'package:task_craft/features/profile/data/models/user_model.dart';
