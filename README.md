@@ -4,6 +4,8 @@ A high-performance, enterprise-grade task management application built with **Fl
 
 ---
 
+![App Video ](screenshots/taskCraft.mp4)
+
 ## 🏗️ Architecture Philosophy & System Overview
 
 Task Craft strictly implements **Clean Architecture** decoupled into isolated layers (**Domain, Data, and Presentation**), driving robust modularity and seamless unit testing.
