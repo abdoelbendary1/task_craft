@@ -1,6 +1,10 @@
+// lib/core/routing/app_router.dart
+
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:task_craft/core/di/injection.dart';
 import 'package:task_craft/core/routing/app_routes.dart';
 import 'package:task_craft/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:task_craft/features/auth/presentation/pages/login_screen.dart';
@@ -8,60 +12,82 @@ import 'package:task_craft/features/auth/presentation/pages/register_screen.dart
 import 'package:task_craft/features/bottom_nav_bar.dart';
 import 'package:task_craft/features/home/presentation/pages/home_screen.dart';
 import 'package:task_craft/features/profile/presentation/pages/profile_screen.dart';
+import 'package:task_craft/features/tasks/presentation/add_task/add_task_bottom_sheet.dart';
+import 'package:task_craft/features/tasks/presentation/add_task/bloc/new_task_bloc.dart';
+import 'package:task_craft/features/tasks/presentation/bloc/tasks_bloc.dart';
+import 'package:task_craft/features/tasks/presentation/pages/tasks_view.dart';
+
 part 'app_router.g.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
-
 final appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: AppRoutes.home,
   
-  redirect: (context, state) {
-    final authState = context.read<AuthBloc>().state;
+  // 🟢 تأكد أن الـ Stream يقرأ من نفس الـ Instance المتاحة عالمياً للتطبيق
+  refreshListenable: _convertStreamToListenable(
+    getIt<AuthBloc>().stream, 
+  ),
 
-    // Check if the user is logged in based on your AuthBloc state
+  redirect: (context, state) {
+    // 1. نقرأ الحالة الحالية من الـ Bloc الرئيسي مباشرة عبر getIt لضمان دقة البيانات
+    final authState = getIt<AuthBloc>().state;
+
     final bool isLoggedIn = authState.maybeWhen(
       authenticated: (_) => true,
       orElse: () => false,
     );
 
-    final bool isLoggingIn = state.matchedLocation == '/login';
+    final String location = state.matchedLocation;
+    final bool isAuthRoute = location == AppRoutes.login || location == AppRoutes.register;
 
-    // If not logged in and trying to access app pages -> Force redirect to Login
-    if (!isLoggedIn && !isLoggingIn) return '/login';
+    // 🔬 طباعة للمراقبة (Debug Logs) لمعرفة من الجاني في قفل الـ Navigation
+    debugPrint('🚦 ROUTER REDIRECT: Location = $location | IsLoggedIn = $isLoggedIn');
 
-    // If logged in and trying to view Login page -> Push them to Home instead
-    if (isLoggedIn && isLoggingIn) return '/home';
+    // 🟢 القاعدة الأولى: لو المستخدم غير مسجل ويحاول الدخول للتطبيق -> أرجعه للـ Login
+    if (!isLoggedIn && !isAuthRoute) {
+      debugPrint('🛑 Access Denied: Redirecting to LOGIN');
+      return AppRoutes.login;
+    }
 
-    // No redirection needed, proceed normally
+    // 🟢 القاعدة الثانية: لو المستخدم مسجل بالفعل ويقف في شاشات الـ Auth (سواء فتح التطبيق أو سجل يدوياً)
+    // خذه فوراً إلى الـ Home
+    if (isLoggedIn && isAuthRoute) {
+      debugPrint('🎉 Access Granted: Redirecting to HOME');
+      return AppRoutes.home;
+    }
+
+    // اترك المستخدم يكمل مساره الطبيعي دون اعتراض
     return null;
   },
-
   routes: $appRoutes,
 );
+Listenable? _convertStreamToListenable(Stream? stream) {
+  if (stream == null) return null;
+  final notifier = ValueNotifier<void>(null);
+  stream.listen((_) => notifier.value = null);
+  return notifier;
+}
 
+// ==========================================
+// 1. مسارات الـ Authentication
+// ==========================================
 @TypedGoRoute<LoginRoute>(path: AppRoutes.login)
 class LoginRoute extends GoRouteData with $LoginRoute {
-  // 💡 Added 'with $LoginRoute' here
   const LoginRoute();
-
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const LoginScreen();
+  Widget build(BuildContext context, GoRouterState state) => const LoginScreen();
 }
 
 @TypedGoRoute<RegisterRoute>(path: AppRoutes.register)
 class RegisterRoute extends GoRouteData with $RegisterRoute {
-  // 💡 Added 'with $LoginRoute' here
   const RegisterRoute();
-
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const RegisterScreen();
+  Widget build(BuildContext context, GoRouterState state) => const RegisterScreen();
 }
 
 // ==========================================
-// 3. بناء الـ Shell Route (Bottom Nav Bar)
+// 2. الـ Shell Route (استقرار الـ Bottom NavBar)
 // ==========================================
 @TypedStatefulShellRoute<AppShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
@@ -69,11 +95,18 @@ class RegisterRoute extends GoRouteData with $RegisterRoute {
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<HomeRoute>(
           path: AppRoutes.home,
-          routes: <TypedRoute<RouteData>>[],
+          routes: <TypedRoute<RouteData>>[
+            TypedGoRoute<ProjectTasksRoute>(
+              path: AppRoutes.projectTasks,
+              routes: <TypedRoute<RouteData>>[
+                // 💡 تداخل ذكي: الـ AddTask مسار فرعي مباشر داخل الـ Project Tasks ليكون أعلى الشاشة تماماً
+                TypedGoRoute<AddTaskRoute>(path: 'add-task'), 
+              ],
+            ),
+          ],
         ),
       ],
     ),
-
     TypedStatefulShellBranch<ProfileBranchData>(
       routes: <TypedRoute<RouteData>>[
         TypedGoRoute<ProfileRoute>(path: AppRoutes.profile),
@@ -83,32 +116,18 @@ class RegisterRoute extends GoRouteData with $RegisterRoute {
 )
 class AppShellRouteData extends StatefulShellRouteData {
   const AppShellRouteData();
-
   @override
-  Widget builder(
-    BuildContext context,
-    GoRouterState state,
-    StatefulNavigationShell navigationShell,
-  ) {
-    // بنمرر الـ navigationShell للـ Scaffold الخارجي عشان يرسم الـ Bottom NavBar
+  Widget builder(BuildContext context, GoRouterState state, StatefulNavigationShell navigationShell) {
     return BottomNavBarScaffold(navigationShell: navigationShell);
   }
 }
 
-// ==========================================
-// 4. تعريف الـ Branches (الأفرع بتاعة الـ Tabs)
-// ==========================================
-class HomeBranchData extends StatefulShellBranchData {
-  const HomeBranchData();
-}
-
-class ProfileBranchData extends StatefulShellBranchData {
-  const ProfileBranchData();
-}
+class HomeBranchData extends StatefulShellBranchData { const HomeBranchData(); }
+class ProfileBranchData extends StatefulShellBranchData { const ProfileBranchData(); }
 
 // ==========================================
+// 3. الـ Routes والـ Injection المستقر للمهام
 // ==========================================
-
 class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
   @override
@@ -118,6 +137,58 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 class ProfileRoute extends GoRouteData with $ProfileRoute {
   const ProfileRoute();
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      const ProfileScreen();
+  Widget build(BuildContext context, GoRouterState state) => const ProfileScreen();
+}
+
+class ProjectTasksRoute extends GoRouteData with $ProjectTasksRoute {
+  final String id;
+  final String title;
+
+  const ProjectTasksRoute({required this.id, required this.title});
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<ProjectTasksBloc>()..add(ProjectTasksEvent.started(id))),
+        BlocProvider(create: (_) => getIt<NewTaskBloc>()),
+      ],
+      child: TasksView(projectId: id, projectTitle: title),
+    );
+  }
+}
+
+// 💡 تم إضافة الـ Mixin التابع للمسار الفرعي حتى تختفي الـ UnimplementedError
+class AddTaskRoute extends GoRouteData with $AddTaskRoute {
+  final String projectId; 
+
+  const AddTaskRoute({required this.projectId});
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      opaque: false, 
+      barrierColor: Colors.black54, 
+      barrierDismissible: true,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+          child: child,
+        );
+      },
+      child: BlocProvider(
+        create: (context) => getIt<NewTaskBloc>(),
+        child: AddTaskBottomSheet(
+          projectId: projectId, 
+          onTaskCreated: (newProject) {
+            // Callback التحديث
+          },
+        ),
+      ),
+    );
+  }
 }

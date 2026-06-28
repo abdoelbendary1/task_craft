@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:task_craft/features/home/data/models/project_model.dart';
-import 'package:task_craft/features/home/data/models/task_model.dart';
+import 'package:task_craft/features/tasks/data/model/task_model.dart';
 part 'project_entity.freezed.dart';
 part 'project_entity.g.dart';
 

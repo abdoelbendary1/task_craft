@@ -1,14 +1,17 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_craft/core/helpers/extentions.dart';
+import 'package:task_craft/core/helpers/validators.dart';
 import 'package:task_craft/core/routing/app_router.dart';
 import 'package:task_craft/core/services/notification/notification_service.dart';
 import 'package:task_craft/core/services/notification/notification_state.dart';
 import 'package:task_craft/core/theme/app_colors.dart';
-import 'package:task_craft/features/add_project/widgets/login_header_section.dart';
+import 'package:task_craft/features/home/presentation/add_project/widgets/login_header_section.dart';
 import 'package:task_craft/features/auth/presentation/widgets/credential_form_card.dart';
 import 'package:task_craft/features/auth/presentation/widgets/login_footer.dart';
+import 'package:task_craft/features/auth/presentation/bloc/user_bloc/user_bloc.dart';
 import '../bloc/auth_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,17 +24,13 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
-  late final TextEditingController _nameController;
-  bool _isSignUpMode = false;
+  late final TextEditingController _nameController; // Dummy for form signature consistency
 
   @override
   void initState() {
     super.initState();
-
-    _emailController = TextEditingController(
-      text: "abdelrahman.elbendary0@gmail.com",
-    );
-    _passwordController = TextEditingController(text: "123456");
+    _emailController = TextEditingController(text: "abdelrahman.elbendary0@gmail.com");
+    _passwordController = TextEditingController(text: "123456" );
     _nameController = TextEditingController();
   }
 
@@ -44,31 +43,42 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleAuthListener(BuildContext context, AuthState state) {
-    state.maybeWhen(
+    state.when(
+      initial: () {},
+      loading: () {},
+      authenticated: (userEntity) {
+        // Populates the globally accessible UserBloc warehouse with domain session details
+        context.read<UserBloc>().add(UserEvent.profileSaved(userEntity));
+        const HomeRoute().go(context);
+      },
       unauthenticated: (err) {
+        context.read<UserBloc>().add(const UserEvent.logOut());
         if (err != null) {
           NotificationService.show(message: err, type: NotificationType.error);
         }
       },
-      orElse: () {
-        HomeRoute().go(context);
-      },
     );
   }
 
-  void _submitForm() {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    final name = _nameController.text.trim();
-    final authBloc = context.read<AuthBloc>();
+  void _submitLogin() {
+    final emailError = AuthValidators.validateEmail(_emailController.text);
+    final passwordError = AuthValidators.validatePassword(_passwordController.text);
 
-    if (_isSignUpMode) {
-      authBloc.add(
-        AuthEvent.signUpSubmitted(name: name, email: email, password: password),
-      );
-    } else {
-      authBloc.add(AuthEvent.loginSubmitted(email: email, password: password));
+    if (emailError != null) {
+      NotificationService.show(message: emailError, type: NotificationType.error);
+      return;
     }
+    if (passwordError != null) {
+      NotificationService.show(message: passwordError, type: NotificationType.error);
+      return;
+    }
+
+    context.read<AuthBloc>().add(
+          AuthEvent.loginSubmitted(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          ),
+        );
   }
 
   @override
@@ -97,21 +107,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     20.vSpace,
-                    LoginHeaderSection(isSignUpMode: _isSignUpMode),
+                    const LoginHeaderSection(isSignUpMode: false),
                     40.vSpace,
                     CredentialFormCard(
                       emailController: _emailController,
                       passwordController: _passwordController,
                       nameController: _nameController,
-                      isSignUpMode: _isSignUpMode,
+                      isSignUpMode: false,
                       isLoading: isLoading,
-                      onSubmit: _submitForm,
+                      onSubmit: _submitLogin,
                     ),
                     32.vSpace,
                     LoginFooterToggle(
-                      isSignUpMode: _isSignUpMode,
-                      onToggle: () =>
-                          setState(() => _isSignUpMode = !_isSignUpMode),
+                      isSignUpMode: false,
+                      onToggle: () => const RegisterRoute().go(context),
                     ),
                     20.vSpace,
                   ],

@@ -1,342 +1,272 @@
-// lib/features/profile/presentation/pages/profile_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_craft/core/helpers/extentions.dart';
+import 'package:task_craft/core/routing/app_router.dart';
 import 'package:task_craft/core/theme/cubit/theme_cubit.dart';
 import 'package:task_craft/core/theme/cubit/theme_state.dart';
 import 'package:task_craft/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:task_craft/features/auth/presentation/bloc/user_bloc/user_bloc.dart';
+import 'package:task_craft/shared/components/setting_tile.dart'; // 💡 Import atomic widget
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const brandColor = Color(0xFF3F51B5);
-    const badgeBgColor = Color(0xFFE8EAF6);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    // Grabs the live logged-in user entity state from your AuthBloc engine
-
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
-      builder: (context, state) {
-        return state.maybeWhen(
-          authenticated: (user) {
-            return Scaffold(
-              backgroundColor: const Color(0xFFFAFBFF),
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                elevation: 0.5,
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    user.avatarUrl ?? 'https://i.imgur.com/Dx8Z4S7.png',
-                  ),
-                ),
-                title: const Text(
-                  'TaskCraft',
-                  style: TextStyle(
-                    color: Color(0xFF101828),
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.settings_outlined,
-                      color: Color(0xFF3F51B5),
-                    ),
-                    onPressed: () {},
-                  ),
-                ],
-              ),
-              body: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // 👤 Profile Image Stack with Edit Icon
-                    Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 4),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: CircleAvatar(
-                            radius: 60,
-                            backgroundImage: NetworkImage(
-                              user?.avatarUrl ??
-                                  'https://i.imgur.com/Dx8Z4S7.png',
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 4,
-                          right: 4,
-                          child: GestureDetector(
-                            onTap: () {}, // Trigger local photo gallery picker
-                            child: const CircleAvatar(
-                              radius: 18,
-                              backgroundColor: brandColor,
-                              child: Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
-                    // User Meta Information
-                    Text(
-                      user?.name ?? 'Alex Rivera',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF101828),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'alex.rivera@taskcraft.io',
-                      style: TextStyle(fontSize: 14, color: Color(0xFF667085)),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Dynamic Account Badges
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: brandColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'PRO PLAN',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: badgeBgColor,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'ADMIN',
-                            style: TextStyle(
-                              color: brandColor,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-
-                    // 🛠️ Section: Account Settings
-                    _buildSectionTitle('ACCOUNT SETTINGS'),
-                    const SizedBox(height: 8),
-                    Card(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: const BorderSide(color: Color(0xFFEAECF0)),
-                      ),
-                      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile Settings'),
+        elevation: 0,
+      ),
+      body: BlocListener<AuthBloc, AuthState>(
+        listener: (context, state) {
+          state.maybeWhen(
+            unauthenticated: (_) => const LoginRoute().go(context),
+            orElse: () {},
+          );
+        },
+        child: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            return state.maybeWhen(
+              loaded: (user) {
+                return SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // 👤 Adaptive Profile Image Stack with Edit Icon
+                      Stack(
                         children: [
-                          _buildSettingTile(
-                            Icons.security_outlined,
-                            'Account Security',
-                            true,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFEAECF0)),
-                          _buildSettingTile(
-                            Icons.notifications_none_outlined,
-                            'Notifications',
-                            true,
-                          ),
-                          const Divider(height: 1, color: Color(0xFFEAECF0)),
-                          BlocBuilder<ThemeCubit, ThemeState>(
-                            builder: (context, state) {
-                              final isDarkMode =
-                                  state.themeMode == ThemeMode.dark;
-                              return _buildSettingTile(
-                                Icons.dark_mode_outlined,
-                                'Dark Mode',
-                                true,
-                                trailingWidget: Switch(
-                                  value: isDarkMode,
-                                  activeColor: brandColor,
-                                  onChanged: (val) {
-                                    context.read<ThemeCubit>().toggleTheme(val);
-                                  },
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDark ? theme.cardColor : Colors.white,
+                                width: 4,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
                                 ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 🛠️ Section: Support
-                    _buildSectionTitle('SUPPORT'),
-                    const SizedBox(height: 8),
-                    Card(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: const BorderSide(color: Color(0xFFEAECF0)),
-                      ),
-                      child: Column(
-                        children: [
-                          _buildSettingTile(
-                            Icons.help_outline_rounded,
-                            'Help Center',
-                            false,
-                            trailingWidget: const Icon(
-                              Icons.open_in_new,
-                              color: Color(0xFF98A2B3),
-                              size: 20,
+                              ],
+                            ),
+                            child: CircleAvatar(
+                              radius: 60,
+                              backgroundColor: theme.disabledColor.withOpacity(0.1),
+                              backgroundImage: NetworkImage(
+                                user.avatarUrl?.isNotEmpty ?? false
+                                    ? user.avatarUrl!
+                                    : 'https://i.imgur.com/Dx8Z4S7.png',
+                              ),
                             ),
                           ),
-                          const Divider(height: 1, color: Color(0xFFEAECF0)),
-                          _buildSettingTile(
-                            Icons.info_outline,
-                            'About TaskCraft',
-                            true,
+                          Positioned(
+                            bottom: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: CircleAvatar(
+                                radius: 18,
+                                backgroundColor: theme.colorScheme.primary,
+                                child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 32),
+                      16.vSpace, // 💡 Using custom responsive extension spacer
 
-                    // 🚪 Logout Interaction Button Component
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: OutlinedButton.icon(
-                        style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                            color: Color(0xFFFDA29B),
-                            width: 1.5,
+                      Text(
+                        user.name,
+                        style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      4.vSpace,
+                      Text(
+                        user.email,
+                        style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor),
+                      ),
+                      16.vSpace,
+
+                      // Account Plan Status Badges
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'PRO PLAN',
+                              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
                           ),
-                          backgroundColor: const Color(0xFFFEF3F2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                          12.hSpace, // 💡 Using custom responsive extension spacer
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.secondaryContainer,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'ADMIN',
+                              style: TextStyle(
+                                color: theme.colorScheme.onSecondaryContainer,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
+                        ],
+                      ),
+                      32.vSpace,
+
+                      // 🛠️ Section: Account Settings
+                      _buildSectionTitle(context, 'ACCOUNT SETTINGS'),
+                      8.vSpace,
+                      Card(
+                        elevation: 0,
+                        color: theme.cardColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
                         ),
-                        onPressed: () {
-                          // 🟢 Triggers the clearSession pipeline inside your clean architecture layer!
-                          context.read<AuthBloc>().add(
-                            const AuthEvent.loggedOut(),
-                          );
-                        },
-                        icon: const Icon(
-                          Icons.logout_rounded,
-                          color: Color(0xFFB42318),
+                        child: Column(
+                          children: [
+                            SettingTile(
+                              icon: Icons.security_outlined,
+                              title: 'Account Security',
+                              onTap: () {},
+                            ),
+                            const Divider(height: 1),
+                            SettingTile(
+                              icon: Icons.notifications_none_outlined,
+                              title: 'Notifications',
+                              onTap: () {},
+                            ),
+                            const Divider(height: 1),
+                            BlocBuilder<ThemeCubit, ThemeState>(
+                              builder: (context, themeState) {
+                                final isDarkMode = themeState.themeMode == ThemeMode.dark;
+                                return SettingTile(
+                                  icon: Icons.dark_mode_outlined,
+                                  title: 'Dark Mode',
+                                  showChevron: false,
+                                  trailingWidget: Switch.adaptive(
+                                    value: isDarkMode,
+                                    activeColor: theme.colorScheme.primary,
+                                    onChanged: (val) {
+                                      context.read<ThemeCubit>().toggleTheme(val);
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                        label: const Text(
-                          'Logout',
-                          style: TextStyle(
-                            color: Color(0xFFB42318),
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                      ),
+                      24.vSpace,
+
+                      // 🛠️ Section: Support
+                      _buildSectionTitle(context, 'SUPPORT'),
+                      8.vSpace,
+                      Card(
+                        elevation: 0,
+                        color: theme.cardColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(color: theme.dividerColor.withOpacity(0.5)),
+                        ),
+                        child: Column(
+                          children: [
+                            SettingTile(
+                              icon: Icons.help_outline_rounded,
+                              title: 'Help Center',
+                              showChevron: false,
+                              trailingWidget: Icon(Icons.open_in_new, color: theme.hintColor, size: 20),
+                            ),
+                            const Divider(height: 1),
+                            SettingTile(
+                              icon: Icons.info_outline,
+                              title: 'About TaskCraft',
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                      ),
+                      32.vSpace,
+
+                      // 🚪 Logout Interaction Button Container
+                      SizedBox(
+                        width: double.infinity,
+                        height: 56,
+                        child: OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: isDark ? Colors.redAccent : const Color(0xFFFDA29B),
+                              width: 1.5,
+                            ),
+                            backgroundColor: isDark ? Colors.red.withOpacity(0.1) : const Color(0xFFFEF3F2),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () {
+                            context.read<AuthBloc>().add(const AuthEvent.loggedOut());
+                          },
+                          icon: Icon(
+                            Icons.logout_rounded,
+                            color: isDark ? Colors.redAccent : const Color(0xFFB42318),
+                          ),
+                          label: Text(
+                            'Logout',
+                            style: TextStyle(
+                              color: isDark ? Colors.redAccent : const Color(0xFFB42318),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      16.vSpace,
 
-                    const Text(
-                      'Version 2.4.0 (2026)',
-                      style: TextStyle(color: Color(0xFF98A2B3), fontSize: 12),
-                    ),
-                    const SizedBox(height: 40),
-                  ],
-                ),
-              ),
+                      Text(
+                        'Version 2.4.0 (2026)',
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
+                      ),
+                      40.vSpace,
+                    ],
+                  ).p(value: 24), // 💡 Using your responsive extension padding layout anchor wrapper
+                );
+              },
+              orElse: () => const Center(child: CircularProgressIndicator()),
             );
           },
-          orElse: () => Container(),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  // Helper builder for setting items
-  Widget _buildSettingTile(
-    IconData icon,
-    String title,
-    bool showChevron, {
-    Widget? trailingWidget,
-  }) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: const Color(0xFFEBF0FF),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: const Color(0xFF3F51B5), size: 22),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF344054),
-          fontSize: 15,
-        ),
-      ),
-      trailing:
-          trailingWidget ??
-          (showChevron
-              ? const Icon(Icons.chevron_right, color: Color(0xFF98A2B3))
-              : null),
-      onTap: trailingWidget != null ? null : () {},
-    );
-  }
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final theme = Theme.of(context);
 
-  // Helper builder for category headers
-  Widget _buildSectionTitle(String title) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 12,
+        style: theme.textTheme.bodySmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Color(0xFF667085),
+          color: theme.hintColor,
           letterSpacing: 0.8,
         ),
-      ).pl(4),
+      ).pl(4), // 💡 Using your custom responsive left padding utility extension
     );
   }
 }

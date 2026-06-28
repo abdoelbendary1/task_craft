@@ -4,8 +4,9 @@ import 'package:injectable/injectable.dart';
 
 abstract class AuthLocalDataSource {
   Future<String?> getAccessToken();
-  
+  Future<void> saveUserId(String userId);
   Future<void> saveAccessToken(String token);
+  Future<String> getUserId();
   Future<void> clearSession();
 }
 
@@ -34,5 +35,17 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> clearSession() async {
     // 🟢 Erase the token securely when logging out
     await _secureStorage.delete(key: _tokenKey);
+  }
+  
+  @override
+  Future<void> saveUserId(String userId)async {
+  await _secureStorage.delete(key: 'user_id');
+
+ await _secureStorage.write(key: 'user_id', value: userId);
+  }
+  
+  @override
+  Future<String> getUserId() async {
+    return await _secureStorage.read(key: 'user_id') ??"";
   }
 }

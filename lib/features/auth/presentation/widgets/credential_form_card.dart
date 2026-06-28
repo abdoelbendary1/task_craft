@@ -88,25 +88,6 @@ class CredentialFormCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Divider Section Layout
-          Row(
-            children: [
-              Expanded(child: Divider(color: Colors.white12, thickness: 1)),
-              Text(
-                "OR CONTINUE WITH",
-                style: TextStyle(
-                  color: Colors.white38,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                ),
-              ).px(defaultHorizontal: 8),
-              Expanded(child: Divider(color: Colors.white12, thickness: 1)),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Native Identity Providers Options
-          // const SocialAuthButtons(),
         ],
       ),
     );

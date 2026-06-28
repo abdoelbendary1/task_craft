@@ -1,53 +1,212 @@
-// data/datasources/auth_remote_data_source.dart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:task_craft/core/network/api_client.dart';
 import 'package:task_craft/features/profile/data/models/user_model.dart';
 import 'package:task_craft/features/auth/data/datasources/auth_local_data_source.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel?> login({required String email, required String password});
-  Future<UserModel?> signUp({
-    required String name,
-    required String email,
-    required String password,
-  });
+  Future<UserModel?> signUp({required String name, required String email, required String password});
   Future<UserModel?> getCurrentUser();
-  
+  Future<UserModel?> checkAuthStatus();
   Future<void> logout();
 }
 
 @LazySingleton(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final Dio _dio;
+  final ApiClient _apiClient;
   final AuthLocalDataSource _authLocalDataSource;
+  final Dio _authDio;
+  final String _anonKey;
 
-  // 🟢 Injecting Dio (configured with BaseURL) and local storage for token management
-  AuthRemoteDataSourceImpl(this._dio, this._authLocalDataSource);
-
-  @override
-  Future<UserModel?> login({
-    required String email,
-    required String password,
-  }) async {
-    // 1. Authenticate with Supabase Auth Engine via API route
-    final response = await _dio.post(
-      'https://qgfhhtdlmnbfwflexduz.supabase.co/auth/v1/token?grant_type=password',
-      data: {'email': email, 'password': password},
-    );
-
-    final data = response.data as Map<String, dynamic>;
-    final token = data['access_token'] as String?;
-    final userId = data['user']?['id'] as String?;
-
-    if (token != null && userId != null) {
-      // 2. Persist token locally so Dio Interceptors capture it for subsequent requests
-      await _authLocalDataSource.saveAccessToken(token);
-
-      // 3. Fetch full profile model payload context
-      return await _fetchUserProfile(userId);
-    }
-    return null;
-  }
+  AuthRemoteDataSourceImpl(
+    this._apiClient,
+    this._authLocalDataSource,
+    @Named('authDio') this._authDio,               
+    @Named('supabaseAnonKey') this._anonKey,       
+  );
 
   @override
   Future<UserModel?> signUp({
@@ -55,28 +214,58 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    // 1. Create account in Supabase Auth Endpoint
-    final response = await _dio.post(
-      'https://qgfhhtdlmnbfwflexduz.supabase.co/auth/v1/signup',
-      data: {
-        'email': email,
-        'password': password,
-        'options': {
-          'data': {
-            'name':
-                name, // ⚡ Triggers the DB function to create a matching profile row
+    try {
+      
+      final response = await _authDio.post(
+        '/signup',
+        data: {
+          'email': email,
+          'password': password,
+          'data': { 
+            'full_name': name,
           },
         },
-      },
-    );
+      );
 
-    final data = response.data as Map<String, dynamic>;
-    final token = data['access_token'] as String?;
-    final userId = data['user']?['id'] as String?;
+      final data = response.data as Map<String, dynamic>;
+      final token = data['access_token'] as String?;
+      final userId = data['user']?['id'] as String?;
 
-    if (token != null && userId != null) {
-      await _authLocalDataSource.saveAccessToken(token);
-      return await _fetchUserProfile(userId);
+      if (token != null && userId != null) {
+        await _authLocalDataSource.saveUserId(userId);
+        await _authLocalDataSource.saveAccessToken(token);
+        
+        
+        return await _fetchUserProfile(userId, emailFallback: email);
+      }
+    } catch (e) {
+      print("💥 [SignUp Remote Error]: $e");
+      rethrow;
+    }
+    return null;
+  }
+
+  @override
+  Future<UserModel?> login({required String email, required String password}) async {
+    try {
+      final response = await _authDio.post(
+        '/token?grant_type=password',
+        data: {'email': email, 'password': password},
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      final token = data['access_token'] as String?;
+      final userId = data['user']?['id'] as String?;
+      final userEmail = data['user']?['email'] as String?;
+
+      if (token != null && userId != null) {
+        await _authLocalDataSource.saveUserId(userId);
+        await _authLocalDataSource.saveAccessToken(token);
+        return await _fetchUserProfile(userId, emailFallback: userEmail);
+      }
+    } catch (e) {
+      print("💥 [Login Remote Error]: $e");
+      rethrow;
     }
     return null;
   }
@@ -84,17 +273,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUser() async {
     try {
-      // 1. Pull current user from Supabase identity provider metadata
-      final response = await _dio.get(
-        'https://qgfhhtdlmnbfwflexduz.supabase.co/auth/v1/user',
-      );
-      final userId = response.data['id'] as String?;
+      final token = await _authLocalDataSource.getAccessToken();
+      if (token == null || token.isEmpty) return null;
 
-      if (userId != null) {
-        return await _fetchUserProfile(userId);
-      }
+      final response = await _authDio.get(
+        '/user',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token', 
+          },
+        ),
+      );
+      
+      final data = response.data as Map<String, dynamic>;
+      final userId = data['id'] as String?;
+      final userEmail = data['email'] as String?;
+      if (userId != null) return await _fetchUserProfile(userId, emailFallback: userEmail);
     } catch (_) {
-      // Token might be expired or invalid
       return null;
     }
     return null;
@@ -103,33 +298,55 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> logout() async {
     try {
-      // 1. Terminate server-side authorization state tracking
-      await _dio.post(
-        'https://qgfhhtdlmnbfwflexduz.supabase.co/auth/v1/logout',
-      );
+      final token = await _authLocalDataSource.getAccessToken();
+      if (token != null && token.isNotEmpty) {
+        await _authDio.post(
+          '/logout',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ),
+        );
+      }
+    } catch (_) {
+      
     } finally {
-      // 2. ALWAYS clear local persistence tokens regardless of network response code status
       await _authLocalDataSource.clearSession();
     }
   }
 
-  // 🟢 Helper method to fetch and parse profile metadata from DB
   @override
-  Future<UserModel?> _fetchUserProfile(String userId) async {
-    // Pulls from our custom app profiles table schema using raw Rest configuration setup
-    final response = await _dio.get('profiles?id=eq.$userId');
-    final List<dynamic> list = response.data;
+  Future<UserModel?> checkAuthStatus() async {
+    final userId = await _authLocalDataSource.getUserId();
+    if (userId == null || userId.isEmpty) return null;
+    return await _fetchUserProfile(userId);
+  }
 
-    if (list.isNotEmpty) {
-      final profileJson = list.first as Map<String, dynamic>;
-
-      // Construct your UserModel mapping profile fields appropriately
-      return UserModel.fromJson({
-        'id': userId,
-        'name': profileJson['full_name'] ?? "",
-        'avatar_url': profileJson['avatar_url'] ?? "",
-      });
+  
+  Future<UserModel?> _fetchUserProfile(String userId, {String? emailFallback}) async {
+    try {
+      final response = await _apiClient.request<UserModel?>(
+        path: '/profiles?id=eq.$userId', 
+        method: 'GET',
+        fromJson: (json) {
+          
+          if (json is List && json.isNotEmpty) {
+            final profileMap = json.first as Map<String, dynamic>;
+            return UserModel.fromJson({
+              'id': userId,
+              'name': profileMap['full_name'] ?? 'New Member',
+              'email': emailFallback ?? '',
+              'avatar_url': profileMap['avatar_url'] ?? '',
+            });
+          }
+          return null;
+        },
+      );
+      return response;
+    } catch (e) {
+      print('❌ [Fetch User Profile Crash]: $e');
+      return null;
     }
-    return null;
   }
 }

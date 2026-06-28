@@ -10,12 +10,8 @@ class ProjectsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: RefreshIndicator(
+    return RefreshIndicator(
           onRefresh: () async => context.read<ProjectsBloc>().add(
             const ProjectsEvent.refreshProjects(),
           ),
@@ -23,8 +19,7 @@ class ProjectsView extends StatelessWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [BuildHomeHeader(), BuildHomeBody()],
           ).px(defaultHorizontal: 16),
-        ),
-      ),
-    );
+        );
+      
   }
 }

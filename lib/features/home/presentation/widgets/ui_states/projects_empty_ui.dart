@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:task_craft/core/assets/app_assets.dart';
 import 'package:task_craft/core/helpers/extentions.dart';
-import 'package:task_craft/features/home/presentation/widgets/start_initial_project_card.dart';
 
 class ProjectsEmptyUI extends StatelessWidget {
   final VoidCallback? onCreateProjectPressed;
@@ -18,11 +17,11 @@ class ProjectsEmptyUI extends StatelessWidget {
         const _EmptyStateIllustration(),
         SizedBox(height: 32.h),
         const _EmptyStateTextSection(),
-        // SizedBox(height: 24.h),            const StartNewInitiativeCard(),
+        
 
-        // _EmptyStateActionButton(onPressed: onCreateProjectPressed),
-        // SizedBox(height: 32.h),
-        // const _QuickStartDivider(),
+        
+        
+        
       ],
     ).px(defaultHorizontal: 16);
   }

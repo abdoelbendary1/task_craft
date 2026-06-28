@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:task_craft/core/enum/https_mehtods.dart';
 import 'package:task_craft/core/errors/failures.dart';
 import 'package:task_craft/core/network/interceptor/api_endpoints.dart';
 import 'package:task_craft/core/network/success_repsonse.dart';
@@ -85,7 +86,7 @@ class ProjectRepositoryImpl implements ProjectRepository {
       if (e.type == DioExceptionType.connectionError ||
           e.response?.statusCode == 503) {
         await _syncManager.addToActionQueue(
-          endpoint: ApiEndpoints.projectsPath,
+          endpoint: ApiEndpoints.projects,
           method: HttpMethod.POST.name,
           payload: model.toJson(),
         );

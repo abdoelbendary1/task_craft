@@ -25,7 +25,7 @@ class BuildHomeHeader extends StatelessWidget {
             authenticated: (user) => HeaderSectionView(
               userName: user.name,
               onSettingsPressed: () {},
-              onCreateProjectPressed: () => addTask(context),
+              onCreateProjectPressed: () => addProject(context),
             ),
             orElse: () => const SizedBox(),
           );

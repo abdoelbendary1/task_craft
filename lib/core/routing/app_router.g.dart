@@ -63,7 +63,22 @@ RouteBase get $appShellRouteData => StatefulShellRouteData.$route(
   branches: [
     StatefulShellBranchData.$branch(
       routes: [
-        GoRouteData.$route(path: '/home', factory: $HomeRoute._fromState),
+        GoRouteData.$route(
+          path: '/home',
+          factory: $HomeRoute._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: 'project-tasks',
+              factory: $ProjectTasksRoute._fromState,
+              routes: [
+                GoRouteData.$route(
+                  path: 'add-task',
+                  factory: $AddTaskRoute._fromState,
+                ),
+              ],
+            ),
+          ],
+        ),
       ],
     ),
     StatefulShellBranchData.$branch(
@@ -84,6 +99,60 @@ mixin $HomeRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/home');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ProjectTasksRoute on GoRouteData {
+  static ProjectTasksRoute _fromState(GoRouterState state) => ProjectTasksRoute(
+    id: state.uri.queryParameters['id']!,
+    title: state.uri.queryParameters['title']!,
+  );
+
+  ProjectTasksRoute get _self => this as ProjectTasksRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/home/project-tasks',
+    queryParams: {'id': _self.id, 'title': _self.title},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $AddTaskRoute on GoRouteData {
+  static AddTaskRoute _fromState(GoRouterState state) =>
+      AddTaskRoute(projectId: state.uri.queryParameters['project-id']!);
+
+  AddTaskRoute get _self => this as AddTaskRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/home/project-tasks/add-task',
+    queryParams: {'project-id': _self.projectId},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

@@ -23,6 +23,7 @@ class LabeledTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -33,7 +34,7 @@ class LabeledTextField extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: AppColors.activeBlueText,
+                color: theme.colorScheme.primary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.5,
@@ -47,6 +48,7 @@ class LabeledTextField extends StatelessWidget {
           controller: controller,
           obscureText: obscure,
           keyboardType: keyboardType,
+          cursorColor: theme.textTheme.bodyLarge?.color,
           style: TextStyle(color: AppColors.activeBlueBg, fontSize: 15),
           decoration: InputDecoration(
             prefixIcon: Icon(icon, color: Colors.white38, size: 20),

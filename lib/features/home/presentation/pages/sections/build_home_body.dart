@@ -4,12 +4,11 @@ import 'package:task_craft/core/di/injection.dart';
 import 'package:task_craft/core/helpers/helpers.dart';
 import 'package:task_craft/core/services/notification/notification_service.dart';
 import 'package:task_craft/core/services/notification/notification_state.dart';
-import 'package:task_craft/features/add_project/bloc/new_project_bloc.dart';
+import 'package:task_craft/features/home/presentation/add_project/bloc/new_project_bloc.dart';
 import 'package:task_craft/features/home/domain/entities/project_entity.dart';
 import 'package:task_craft/features/home/presentation/bloc/projects_bloc.dart';
-import 'package:task_craft/features/add_project/add_task_bottom_sheet.dart';
+import 'package:task_craft/features/home/presentation/add_project/add_project_bottom_sheet.dart';
 import 'package:task_craft/features/home/presentation/widgets/ui_states/projects_empty_ui.dart';
-import 'package:task_craft/features/home/presentation/widgets/start_initial_project_card.dart';
 import 'package:task_craft/features/home/presentation/widgets/ui_states/projects_loaded.dart';
 import 'package:task_craft/features/home/presentation/widgets/ui_states/projects_loading.dart';
 
@@ -22,7 +21,9 @@ class BuildHomeBody extends StatelessWidget {
       bloc: context.read<ProjectsBloc>()..add(const ProjectsEvent.started()),
       listener: (context, state) {
         state.maybeWhen(
-          orElse: () {},
+          orElse: () {
+            print(  "");
+          },
           // loaded: (projects) => NotificationService.show(
           //   message: 'You have ${projects.length} projects',
           //   type: NotificationType.success,
@@ -49,6 +50,7 @@ class BuildHomeBody extends StatelessWidget {
 
 Widget buildInitialUI() => const SliverToBoxAdapter(child: SizedBox.shrink());
 
+
 Widget buildLoadingUI() {
   // 🟢 ترجع الـ Sliver Shimmer فوراً للـ CustomScrollView بدون مشاكل Layout
   return const ProjectsLoadingShimmerList(itemCount: 3);
@@ -56,24 +58,24 @@ Widget buildLoadingUI() {
 
 Widget buildEmptyListUI(BuildContext context) {
   return SliverToBoxAdapter(
-    child: ProjectsEmptyUI(onCreateProjectPressed: () => addTask(context)),
+    child: ProjectsEmptyUI(onCreateProjectPressed: () => addProject(context)),
   );
 }
 
 Widget buildErrorUI(BuildContext context) {
   return SliverToBoxAdapter(
-    child: ProjectsEmptyUI(onCreateProjectPressed: () => addTask(context)),
+    child: ProjectsEmptyUI(onCreateProjectPressed: () => addProject(context)),
   );
 }
 
 Widget buildProjectsUI(List<ProjectEntity> projects) =>
     ProjectsLoadedUI(projects: projects);
-void addTask(BuildContext context) {
+void addProject(BuildContext context) {
   return openAdditionSheet(
     context,
     builder: (_) => BlocProvider(
       create: (context) => getIt<NewProjectBloc>(),
-      child: AddTaskBottomSheet(
+      child: AddProjectBottomSheet(
         onTaskCreated: (newProject) {
           context.read<ProjectsBloc>().add(
             ProjectsEvent.addNewProject(newProject),

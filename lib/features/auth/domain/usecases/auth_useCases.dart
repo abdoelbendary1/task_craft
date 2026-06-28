@@ -1,4 +1,3 @@
-// domain/usecases/login_usecase.dart
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:task_craft/core/errors/failures.dart';
@@ -46,4 +45,14 @@ class LogoutUseCase {
     return await repository.logout();
   }
 }
+@injectable
+class CheckAuthStatusUseCase {
+  final AuthRepository repository;
+  const CheckAuthStatusUseCase(this.repository);
+
+  /// Checks the persistent storage for a valid token and fetches the current [UserEntity].
+  /// Returns a [UserEntity] if authenticated, or `null` if no active session exists.
+  Future<Either<Failure, UserEntity?>> call() async {
+    return await repository.checkAuthStatus();
+  }}
 

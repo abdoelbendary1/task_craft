@@ -24,9 +24,7 @@ class LoginFooterToggle extends StatelessWidget {
           child: Text(
             isSignUpMode ? "Sign In" : "Create Account",
             style: TextStyle(
-              color: theme.brightness == Brightness.dark
-                  ? theme.colorScheme.primary
-                  : AppColors.activeBlueText,
+              color: theme.primaryColor,
               fontSize: 15.sp,
               fontWeight: FontWeight.bold,
             ),
